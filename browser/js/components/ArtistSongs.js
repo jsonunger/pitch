@@ -1,35 +1,14 @@
-import React, { Component, PropTypes } from 'react';
-import SongList from './SongList';
+import React, { PropTypes } from 'react';
+import SongList from '../containers/SongListContainer';
 
-class ArtistSongs extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      songs: []
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      songs: nextProps.artist.songs
-    });
-  }
-
-  componentDidMount() {
-    this.setState({
-      songs: this.props.artist.songs || []
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        <h4>SONGS</h4>
-        <SongList {...this.props} songs={this.state.songs} />
-      </div>
-    );
-  }
-}
+const ArtistSongs = ({ artist }) => {
+  return (
+    <div>
+      <h4>SONGS</h4>
+      <SongList songs={ artist.songs } />
+    </div>
+  );
+};
 
 ArtistSongs.propTypes = {
   artist: PropTypes.object

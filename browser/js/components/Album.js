@@ -1,37 +1,34 @@
 import React, { Component, PropTypes } from 'react';
-import axios from 'axios';
-import SongList from './SongList';
-import * as convert from '../helpers/convert';
+import SongList from '../containers/SongListContainer';
 
 class Album extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      album: {}
-    };
+  constructor(props) {
+    super(props);
   }
 
   componentDidMount() {
-    axios.get(`/api/albums/${this.props.params.albumId}`)
-      .then(res => res.data)
-      .then(convert.convertAlbum)
-      .then(album => {
-        album.songs = album.songs.map(convert.convertSong);
-        return album;
-      })
-      .then(album => {
-        this.setState({ album });
-      });
+    const { fetchAlbum, params } = this.props;
+    fetchAlbum(params.albumId);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { fetchAlbum, params } = nextProps;
+    fetchAlbum(params.albumId);
+  }
+
+  componentWillUnmount() {
+    this.props.unset();
   }
 
   render() {
+    const { album } = this.props;
     return (
       <div className="album">
         <div>
-          <h3>{ this.state.album.name }</h3>
-          <img src={ this.state.album.imageUrl } className="img-thumbnail" />
+          <h3>{ album.name }</h3>
+          <img src={ album.imageUrl } className="img-thumbnail" />
         </div>
-        <SongList {...this.props} songs={this.state.album.songs || []} />
+        <SongList songs={album.songs} />
       </div>
 
     );
@@ -39,7 +36,10 @@ class Album extends Component {
 }
 
 Album.propTypes = {
-  params: PropTypes.object
+  params: PropTypes.object,
+  fetchAlbum: PropTypes.func.isRequired,
+  unset: PropTypes.func,
+  album: PropTypes.object
 };
 
 export default Album;

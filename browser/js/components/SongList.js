@@ -1,62 +1,48 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
-class SongList extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      songs: props.songs || []
-    };
-    this.removeSong = this.removeSong.bind(this);
+const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSong }) => {
+  if (songs.every(song => song.playlistSong)) {
+    songs.sort((a, b) => new Date(a.playlistSong.createdAt) - new Date(b.playlistSong.createdAt));
   }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      songs: nextProps.songs
-    });
-  }
-
-  removeSong(id, idx) {
-    this.props.removeSong(id, idx);
-  }
-
-  render() {
-    let inPlaylist = this.props.routes.some(route => route.name === 'playlist');
-    return (
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Artists</th>
-            <th>Genres</th>
-            {inPlaylist && <th></th>}
+  return (
+    <table className="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Artists</th>
+          <th>Genres</th>
+          {inPlaylist && <th></th>}
+        </tr>
+      </thead>
+      <tbody id="songList">
+        {songs.map((song, i) => (
+          <tr onDoubleClick={() => playSong(song, songs)} className={ song.id === currentSong.id ? 'active' : '' } key={song.id}>
+            <td>{song.name}</td>
+            <td>
+              {
+                song.artists.map((artist, idx) => <span key={i}>{ artist.name }{ idx === song.artists.length - 1 ? '' : ', ' }</span>)
+              }
+            </td>
+            <td>{ song.genres.join(', ') }</td>
+            {inPlaylist && <td>
+              <button className="btn btn-default btn-xs" onClick={ () => removeSong(playlist.id, song.id) }>
+                <span className="glyphicon glyphicon-remove"></span>
+              </button>
+            </td>}
           </tr>
-        </thead>
-        <tbody id="songList">
-          {this.state.songs.map((song, i) => (
-            <tr key={song.id}>
-              <td>{song.name}</td>
-              <td>
-                {
-                  song.artists.map((artist, i) => <span key={i}>{ artist.name }{ i === song.artists.length - 1 ? '' : ', ' }</span>)
-                }
-              </td>
-              <td>{ song.genres.join(', ') }</td>
-              {inPlaylist && <td>
-                <button className="btn btn-default btn-xs" onClick={ () => this.removeSong(song.id, i) }>
-                  <span className="glyphicon glyphicon-remove"></span>
-                </button>
-              </td>}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-}
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 SongList.propTypes = {
   songs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  routes: PropTypes.array.isRequired
+  inPlaylist: PropTypes.bool,
+  removeSong: PropTypes.func,
+  playlist: PropTypes.object,
+  playSong: PropTypes.func,
+  currentSong: PropTypes.object
 };
 
 export default SongList;

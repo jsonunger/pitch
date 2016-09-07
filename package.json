@@ -9,7 +9,8 @@
     "seed": "node ./bin/seed",
     "db-init": "./db-init.sh",
     "postinstall": "npm run db-init",
-    "dev": "webpack -w -c"
+    "dev": "webpack -w -c",
+    "build": "NODE_ENV='production' webpack -c"
   },
   "dependencies": {
     "axios": "^0.14.0",

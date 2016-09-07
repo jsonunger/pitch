@@ -1,30 +1,17 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
 import AlbumList from './AlbumList';
-import axios from 'axios';
-import { convertAlbum } from '../helpers/convert';
 
-export default class Albums extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      albums: []
-    };
-  }
+const Albums = ({ albums }) => {
+  return (
+    <div>
+      <h3>Albums</h3>
+      <AlbumList albums={ albums } />
+    </div>
+  );
+};
 
-  componentDidMount() {
-    axios.get('/api/albums')
-      .then(res => res.data.map(convertAlbum))
-      .then(albums => {
-        this.setState({ albums });
-      });
-  }
+Albums.propTypes = {
+  albums: PropTypes.arrayOf(PropTypes.object)
+};
 
-  render() {
-    return (
-      <div>
-        <h3>Albums</h3>
-        <AlbumList albums={ this.state.albums } />
-      </div>
-    );
-  }
-}
+export default Albums;

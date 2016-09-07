@@ -1,64 +1,38 @@
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
-import axios from 'axios';
+import ArtistList from './ArtistList';
 
-const ArtistList = ({ artists }) => {
-  return (
-    <div className="list-group">
-      {artists.map(artist => (
-        <div key={artist.id} className="list-group-item">
-          <Link to={`/artists/${artist.id}`}>{ artist.name }</Link>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-ArtistList.propTypes = {
-  artists: PropTypes.arrayOf(PropTypes.object)
-};
-
-export default class Artists extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      artists: [],
-      filteredArtists: []
-    };
-    this.filterArtists = this.filterArtists.bind(this);
-  }
-
+class Artists extends Component {
   componentDidMount() {
-    axios.get('/api/artists')
-      .then(res => res.data)
-      .then(artists => {
-        this.setState({
-          artists: artists,
-          filteredArtists: artists
-        });
+    fetch(new Request('/api/artists'))
+      .then(res => res.json())
+      .then(result => {
+        console.log(result);
       });
   }
 
-  filterArtists(evt) {
-    let value = evt.target.value;
-    let filteredArtists = this.state.artists;
-    if (value) {
-      filteredArtists = filteredArtists.filter(artist => new RegExp(value, 'ig').test(artist.name));
-    }
-
-    this.setState({ filteredArtists });
+  componentWillUnmount() {
+    this.props.unsetFilter();
   }
 
   render() {
+    const { setFilter, artists } = this.props;
     return (
       <div>
         <h3>Artists</h3>
         <div className="panel input-group">
           <span className="input-group-addon">Filter</span>
-          <input type="text" className="form-control" placeholder="by name" onChange={this.filterArtists} />
+          <input type="text" className="form-control" placeholder="by name" onChange={e => setFilter(e.target.value)} />
         </div>
-        <ArtistList artists={this.state.filteredArtists} />
+        <ArtistList artists={artists} />
       </div>
     );
   }
 }
+
+Artists.propTypes = {
+  artists: PropTypes.arrayOf(PropTypes.object),
+  setFilter: PropTypes.func.isRequired,
+  unsetFilter: PropTypes.func.isRequired
+};
+
+export default Artists;

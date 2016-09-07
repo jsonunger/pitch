@@ -1,40 +1,35 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import axios from 'axios';
-import * as convert from '../helpers/convert';
 
 class Artist extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      artist: {}
-    };
+  constructor(props) {
+    super(props);
   }
 
   componentDidMount() {
-    const url = `/api/artists/${this.props.params.artistId}`;
-    axios.all([axios.get(url), axios.get(`${url}/songs`), axios.get(`${url}/albums`)])
-      .then(responses => responses.map(res => res.data))
-      .then(results => {
-        let [artist, songs, albums] = results;
-        artist.songs = songs.map(convert.convertSong);
-        artist.albums = albums.map(convert.convertAlbum);
-        return artist;
-      })
-      .then(artist => {
-        this.setState({ artist });
-      });
+    const { fetchArtist, params } = this.props;
+    fetchArtist(params.artistId);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { fetchArtist, params } = nextProps;
+    fetchArtist(params.artistId);
+  }
+
+  componentWillUnmount() {
+    this.props.unset();
   }
 
   render() {
+    const { artist } = this.props;
     return (
       <div>
-        <h3>{this.state.artist.name}</h3>
+        <h3>{ artist.name }</h3>
         <ul className="nav nav-tabs">
-          <li><Link to={`/artists/${ this.state.artist.id }/albums`}>ALBUMS</Link></li>
-          <li><Link to={`/artists/${ this.state.artist.id }/songs`}>SONGS</Link></li>
+          <li><Link to={`/artists/${ artist.id }/albums`}>ALBUMS</Link></li>
+          <li><Link to={`/artists/${ artist.id }/songs`}>SONGS</Link></li>
         </ul>
-        { React.cloneElement(this.props.children, { artist: this.state.artist }) }
+        { this.props.children }
       </div>
     );
   }
@@ -42,7 +37,10 @@ class Artist extends Component {
 
 Artist.propTypes = {
   params: PropTypes.object.isRequired,
-  children: PropTypes.element.isRequired
+  children: PropTypes.element.isRequired,
+  fetchArtist: PropTypes.func.isRequired,
+  unset: PropTypes.func.isRequired,
+  artist: PropTypes.object
 };
 
 export default Artist;

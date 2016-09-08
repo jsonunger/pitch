@@ -14,11 +14,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    Bluebird.all([dispatch(fetchPlaylists()),
-    dispatch(fetchAlbums()),
-    dispatch(fetchArtists()),
-    dispatch(fetchSongs())]);
+    this.props.init();
   }
 
   render() {
@@ -40,7 +36,20 @@ class App extends Component {
 
 App.propTypes = {
   children: PropTypes.element.isRequired,
-  dispatch: PropTypes.func
+  init: PropTypes.func
 };
 
-export default connect()(App);
+function mapDispatchToProps (dispatch) {
+  return {
+    init() {
+      return Bluebird.all([
+        dispatch(fetchPlaylists()),
+        dispatch(fetchAlbums()),
+        dispatch(fetchArtists()),
+        dispatch(fetchSongs())
+      ]);
+    }
+  };
+}
+
+export default connect(null, mapDispatchToProps)(App);

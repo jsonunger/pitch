@@ -14,7 +14,6 @@ export const start = (song, list) => (dispatch, getState) => {
 
 export const next = () => (dispatch, getState) => {
   const {currentList, currentSong } = getState();
-  console.log(currentList);
   let idx = currentList.indexOf(currentSong);
   idx = mod(idx + 1, currentList.length);
   dispatch(start(currentList[idx], currentList));

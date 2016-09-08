@@ -59,18 +59,18 @@ export default class Player extends Component {
   }
 
   render() {
-    const { currentSong, progress, previous, toggle, isPlaying, next } = this.props;
+    const { currentSong, progress, previous, toggle, isPlaying, next, currentList } = this.props;
     if (!currentSong.id) return null;
     return (
       <div>
         <div className="pull-left">
-          <button onClick={ previous } className="btn btn-default">
+          <button onClick={ previous } className="btn btn-default" disabled={ currentList.length <= 1 }>
             <span className="glyphicon glyphicon-step-backward"></span>
           </button>{' '}
           <button onClick={ toggle } className="btn btn-default">
             <span className={`glyphicon glyphicon-${ isPlaying ? 'pause' : 'play' }`}></span>
           </button>{' '}
-          <button onClick={ next } className="btn btn-default">
+          <button onClick={ next } className="btn btn-default" disabled={ currentList.length <= 1 }>
             <span className="glyphicon glyphicon-step-forward"></span>
           </button>
         </div>

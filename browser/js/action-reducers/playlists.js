@@ -1,5 +1,9 @@
 import { get, post, del } from '../utils/api';
 import { requestFailed } from './error';
+import { setCurrentList } from './currentList';
+import { setCurrentSong } from './currentSong';
+import { pauseMusic } from './isPlaying';
+
 
 /** ACTION TYPES */
 const RECEIVE_PLAYLISTS = 'RECEIVE_PLAYLISTS';
@@ -25,7 +29,10 @@ export const removePlaylist = playlistId => ({
 /** ASYNC ACTION CREATORS */
 export const fetchPlaylists = () => dispatch => {
   return get('/api/playlists')
-  .then(returnedPlaylists => dispatch(receivePlaylists(returnedPlaylists)))
+  .then(returnedPlaylists => {
+    returnedPlaylists.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    return dispatch(receivePlaylists(returnedPlaylists));
+  })
   .catch(err => dispatch(requestFailed(err)));
 };
 
@@ -35,9 +42,19 @@ export const createPlaylist = playlist => dispatch => {
     .catch(err => dispatch(requestFailed(err)));
 };
 
-export const deletePlaylist = playlistId => dispatch => {
+export const deletePlaylist = playlistId => (dispatch, getState) => {
+  const changingCurrentList = getState().currentList == getState().playlist.songs;
   return del(`/api/playlists/${playlistId}`)
     .then(() => dispatch(removePlaylist(playlistId)))
+    .then(() => {
+      if (changingCurrentList) {
+        dispatch(pauseMusic());
+        dispatch(setCurrentList());
+        return dispatch(setCurrentSong());
+      } else {
+        return;
+      }
+    })
     .catch(err => dispatch(requestFailed(err)));
 };
 

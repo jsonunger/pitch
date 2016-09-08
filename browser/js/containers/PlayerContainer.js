@@ -9,7 +9,8 @@ function mapStateToProps (state) {
     isPlaying: state.isPlaying,
     currentSong: state.currentSong,
     scrollWidth: state.scrollWidth,
-    progress: state.progress
+    progress: state.progress,
+    currentList: state.currentList
   };
 }
 

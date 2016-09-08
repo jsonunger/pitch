@@ -11,7 +11,7 @@ const deletePlaylist = (delFunc, id, current) => {
 const Playlists = ({ playlists, del, playlist, routes }) => {
   let playRoute = routes.some(route => route.name === 'playlist');
   return (
-    <section>
+    <section id="playlist">
       <h4 className="text-muted">PLAYLISTS</h4>
       {playlists.map(play =>
         <p key={play.id} className={`menu-item${playRoute && play.name === playlist.name ? ' active' : ''}`}>

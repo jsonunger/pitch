@@ -43,28 +43,37 @@ export const fetchPlaylist = playlistId => (dispatch, getState) => {
     .catch(err => dispatch(requestFailed(err)));
 };
 
-export const addSong = (playlistId, id) => dispatch => {
+export const addSong = (playlistId, id) => (dispatch, getState) => {
+  const changingCurrentList = getState().currentList == getState().playlist.songs;
   return post(`/api/playlists/${playlistId}/songs`, { id })
     .then(convertSong)
     .then(song => dispatch(addSongToPlaylist(song)))
+    .then(() => {
+      if (changingCurrentList) {
+        const { playlist } = getState();
+        return dispatch(setCurrentList(playlist.songs));
+      } else {
+        return;
+      }
+    })
     .catch(err => dispatch(requestFailed(err)));
 };
 
 export const removeSong = (playlistId, id) => (dispatch, getState) => {
+  const changingCurrentList = getState().currentList == getState().playlist.songs;
   return del(`/api/playlists/${playlistId}/songs/${id}`)
     .then(() => dispatch(removeSongFromPlaylist(id)))
     .then(() => {
-      const { currentSong, playlist, currentList } = getState();
-      console.log(currentList == playlist.songs);
-      if (currentList == playlist.songs) {
-        const idx = currentList.findIndex(song => song.id === +id);
-        dispatch(setCurrentList([...currentList(0, idx), ...currentList(idx + 1)]));
+      if (changingCurrentList) {
+        const { playlist } = getState();
+        dispatch(setCurrentList(playlist.songs));
       }
-
-      if (!currentList.length) return dispatch(pauseMusic());
-
-      if (!currentSong.id || +id !== currentSong.id) return;
-      return dispatch(next());
+      const { currentSong, currentList } = getState();
+      if (!currentList.length) {
+        return dispatch(pauseMusic());
+      } else if (+id === currentSong.id) {
+        return dispatch(next());
+      }
     })
     .catch(err => dispatch(requestFailed(err)));
 };

@@ -74,6 +74,5 @@ p.menu-item:hover button {
 }
 
 #playlist {
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow: auto;
 }

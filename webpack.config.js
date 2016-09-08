@@ -7,7 +7,7 @@ const config = {
   entry: `${APP_DIR}/js/index.js`,
   output: {
     path: BUILD_DIR,
-    filename: 'bundle.js',
+    filename: 'bundle.js'
   },
   module: {
     loaders: [{
@@ -31,7 +31,10 @@ const config = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins.unshift(new webpack.optimize.UglifyJsPlugin(), new webpack.optimize.DedupePlugin());
+  config.plugins.unshift(new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }), new webpack.optimize.DedupePlugin());
+} else {
+  config.devtool = 'source-map';
+  config.output.sourceMapFilename = 'bundle.map';
 }
 
 module.exports = config;

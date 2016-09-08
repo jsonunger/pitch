@@ -4,11 +4,11 @@
   "description": "A generated project at Fullstack Academy",
   "main": "server/start.js",
   "scripts": {
-    "start": "bash runner.sh",
+    "start": "node server/main",
+    "start:dev": "bash runner.sh",
     "test": "node_modules/.bin/testem",
     "seed": "node ./bin/seed",
     "db-init": "./db-init.sh",
-    "postinstall": "npm run db-init",
     "dev": "webpack -w -c",
     "build": "NODE_ENV='production' webpack -c"
   },

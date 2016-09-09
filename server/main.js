@@ -16,9 +16,10 @@ var createApplication = function () {
 var startServer = function () {
 
     var PORT = process.env.PORT || 1337;
+    var IP = process.env.IP || 'localhost';
 
-    server.listen(PORT, function () {
-        console.log(chalk.blue(`Server started at ${chalk.magenta(`http://localhost:${PORT}`)}`));
+    server.listen(PORT, IP, function () {
+        console.log(chalk.blue(`Server started at ${chalk.magenta(`http://${IP}:${PORT}`)}`));
     });
 
 };

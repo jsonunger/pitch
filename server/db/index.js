@@ -12,6 +12,7 @@ var syncedDbPromise = db.sync();
 
 syncedDbPromise.then(function () {
   console.log(chalk.green('Sequelize models synced to PostgreSQL'));
-});
+})
+.catch(err => console.error(err.stack));
 
 module.exports = syncedDbPromise;

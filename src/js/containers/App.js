@@ -8,6 +8,8 @@ import { fetchAlbums } from '../action-reducers/albums';
 import { fetchArtists } from '../action-reducers/artists';
 import { fetchSongs } from '../action-reducers/songs';
 
+import '../../scss/app';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -19,16 +21,18 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container-fluid">
-        <div className="col-xs-2">
-          <Sidebar {...this.props} />
+      <div id="app">
+        <div className="container-fluid">
+          <div className="col-xs-2">
+            <Sidebar {...this.props} />
+          </div>
+          <div className="col-xs-10">
+            { this.props.children }
+          </div>
+          <footer>
+            <Player />
+          </footer>
         </div>
-        <div className="col-xs-10">
-          { this.props.children }
-        </div>
-        <footer>
-          <Player />
-        </footer>
       </div>
     );
   }

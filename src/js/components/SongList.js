@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import '../../scss/songList';
 
 const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSong }) => {
   if (songs.every(song => song.playlistSong)) {

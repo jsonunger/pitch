@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import SongList from '../containers/SongListContainer';
+import '../../scss/album';
 
 class Album extends Component {
   constructor(props) {

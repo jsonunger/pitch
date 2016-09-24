@@ -1,0 +1,11 @@
+.playlist {
+  button {
+    display: none;
+  }
+  &:hover {
+    button {
+      display: inline-block;
+      float: right;
+    }
+  }
+}

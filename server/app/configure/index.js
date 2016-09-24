@@ -11,13 +11,11 @@ module.exports = function (app) {
       return app.get(path);
   };
 
+  require('./webpack-middleware')(app);
   require('./app-variables')(app);
-
-  // Logging middleware, set as application
-  // variable inside of server/app/configure/app-variables.js
-  app.use(app.getValue('log'));
-
   require('./static-middleware')(app);
   require('./parsing-middleware')(app);
+
+  app.use(app.getValue('log'));
 
 };

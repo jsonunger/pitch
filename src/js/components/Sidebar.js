@@ -3,6 +3,8 @@ import { Link } from 'react-router';
 import NavLink from './NavLink';
 import Playlists from '../containers/PlaylistsContainer';
 
+import '../../scss/sidebar';
+
 const Sidebar = ({ routes }) => {
   let routeName;
   routes.forEach(route => {

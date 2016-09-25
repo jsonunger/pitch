@@ -16,7 +16,7 @@ const chalk = require('chalk');
 // custom modules
 const helper = require('./helper');
 const metadata = require('./metadataWrapper');
-const db = require('../server/db/db');
+const db = require('../server/db/db').default;
 const models = require('../server/db/models');
 
 Promise.promisifyAll(fs);

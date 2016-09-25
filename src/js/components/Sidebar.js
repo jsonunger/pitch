@@ -14,7 +14,7 @@ const Sidebar = ({ routes }) => {
   });
   return (
     <div id="sidebar">
-      <Link to="/"><img src="/juke.svg" className="logo" /></Link>
+      <Link to="/"><img src="/pitch.svg" className="logo" /></Link>
       <h4 className={ `menu-item${ routeName === 'albums' ? ' active' : '' }` }><NavLink to="/albums">ALBUMS</NavLink></h4>
       <h4 className={ `menu-item${ routeName === 'artists' ? ' active' : '' }` }><NavLink to="/artists">ARTISTS</NavLink></h4>
       <hr />

@@ -1,7 +1,7 @@
 {
-  "name": "juke",
+  "name": "pitch",
   "version": "1.0.0",
-  "description": "A generated project at Fullstack Academy",
+  "description": "A simple music app built with Node, Express and Sequelize/PostgreSQL on the backend, and React and Redux on the front end",
   "main": "server/start.js",
   "scripts": {
     "start": "nodemon --watch server -e js,html server/start.js",

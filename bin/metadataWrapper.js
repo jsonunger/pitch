@@ -1,37 +1,24 @@
-'use strict';
+import Promise from 'bluebird';
+import { readFileSync, createReadStream } from 'fs';
+import { join } from 'path';
+import mm from 'musicmetadata';
 
-const Promise = require('bluebird');
-const fs = require('fs');
-const path = require('path');
-const mm = require('musicmetadata');
+const DEFAULT_ALBUM_COVER_PATH = join(__dirname, 'default-album.jpg');
+const defaultAlbumCoverBuffer = readFileSync(DEFAULT_ALBUM_COVER_PATH);
 
-const DEFAULT_ALBUM_COVER_PATH = path.join(__dirname, 'default-album.jpg');
-const defaultAlbumCoverBuffer = fs.readFileSync(DEFAULT_ALBUM_COVER_PATH);
-
-/*
-Omri & Zeke:
-  We needed to write a wrapper around `musicmetadata` because
-  of a bug we discovered in their use of a single reused buffer
-  for all of their album art work. album <-> art <-> song  assoc
-  was incorrect.
-*/
-
-module.exports = function (name) {
-  return new Promise(function (resolve, reject) {
-    mm(fs.createReadStream(name), function (err, metadata) {
+export default function (name) {
+  return new Promise((resolve, reject) => {
+    mm(createReadStream(name), (err, metadata) => {
       if (err) return reject(err);
 
       metadata.path = name;
-      metadata.picture = metadata.picture[0] || {
-        data: defaultAlbumCoverBuffer,
-        format: 'jpg'
-      };
-      // replace data with a copy to prevent caching
-      var secondPictureBuffer = new Buffer(metadata.picture.data.length);
-      metadata.picture.data.copy(secondPictureBuffer);
-      metadata.picture.data = secondPictureBuffer;
+      metadata.picture = metadata.picture[0] || { data: defaultAlbumCoverBuffer, format: 'jpg' };
+
+      let pictureBuffer = new Buffer(metadata.picture.data.length);
+      metadata.picture.data.copy(pictureBuffer);
+      metadata.picture.data = pictureBuffer;
 
       resolve(metadata);
     });
   });
-};
+}

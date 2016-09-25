@@ -11,4 +11,4 @@ const Juke = () => (
   </Provider>
 );
 
-render(<Juke />, document.getElementById('app'));
+render(<Juke />, document.getElementById('react-app'));

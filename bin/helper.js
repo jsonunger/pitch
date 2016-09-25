@@ -1,44 +1,29 @@
-'use strict';
+import Bluebird from 'bluebird';
+import { extname } from 'path';
+import fs from 'fs';
 
-const Promise = require('bluebird');
-const crypto = require('crypto');
-const pathLib = require('path');
-const fs = require('fs');
+Bluebird.promisifyAll(fs);
 
-Promise.promisifyAll(fs);
+export function isMp3(filePath) {
+  return ['.mp3', '.m4a', '.mp4'].includes(extname(filePath));
+}
 
-module.exports = {
+export function dirWalk(all, root) {
+  if (!root) [root, all] = [all, []];
 
-  getSha1: function (val) {
-    let shaSum = crypto.createHash('sha1');
-    shaSum.update(val);
-    return shaSum.digest('hex');
-  },
+  const add = elem => all.concat(elem);
+  const fullPath = filepath => `${root}/${filepath}`;
 
-  isMp3: (path) => ['.mp3', '.m4a', '.mp4'].includes(pathLib.extname(path)),
-
-  dirWalk: function dirWalk (all, root) {
-    if (!root) {
-      root = all;
-      all = [];
-    }
-    function add (elem) {
-      all.push(elem);
-      return all;
-    }
-    function fullPath (filepath) {
-      return root + '/' + filepath;
-    }
-    return fs.statAsync(root)
-    .then(function (stats) {
+  return fs.statAsync(root)
+    .then(stats => {
       if (stats.isDirectory()) {
         return fs.readdirAsync(root)
-        .map(fullPath)
-        .reduce(dirWalk, all);
+          .map(fullPath)
+          .reduce(dirWalk, all);
       } else if (stats.isFile()) {
         return add(root);
       }
     });
-  }
+}
 
-};
+export default { isMp3, dirWalk };

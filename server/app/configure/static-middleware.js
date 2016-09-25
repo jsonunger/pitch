@@ -1,20 +1,15 @@
-'use strict';
+import path from 'path';
+import express from 'express';
+import favicon from 'serve-favicon';
 
-var path = require('path');
-var express = require('express');
-var favicon = require('serve-favicon');
-
-module.exports = function (app) {
-
-  var root = app.getValue('projectRoot');
-
-  var npmPath = path.join(root, './node_modules');
-  var publicPath = path.join(root, './public');
-  var srcPath = path.join(root, './src');
+export default function (app) {
+  const root = app.getValue('projectRoot');
+  const npmPath = path.join(root, './node_modules');
+  const publicPath = path.join(root, './public');
+  const srcPath = path.join(root, './src');
 
   app.use(favicon(app.getValue('faviconPath')));
   app.use(express.static(npmPath));
   app.use(express.static(publicPath));
   app.use(express.static(srcPath));
-
-};
+}

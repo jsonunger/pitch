@@ -1,15 +1,18 @@
-'use strict';
+import { Router } from 'express';
+import artistRoutes from './artists';
+import albumRoutes from './albums';
+import playlistRoutes from './playlists';
+import songRoutes from './songs';
 
-const router = require('express').Router();
-module.exports = router;
+const routes = Router();
 
-router.use('/artists', require('./artists'));
-router.use('/albums', require('./albums'));
-router.use('/playlists', require('./playlists'));
-router.use('/songs', require('./songs'));
+routes.use('/artists', artistRoutes);
+routes.use('/albums', albumRoutes);
+routes.use('/playlists', playlistRoutes);
+routes.use('/songs', songRoutes);
 
-// Make sure this is after all of
-// the registered routes!
-router.use(function (req, res) {
+routes.use(function (req, res) {
   res.status(404).end();
 });
+
+export default routes;

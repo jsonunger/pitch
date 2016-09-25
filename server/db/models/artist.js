@@ -1,9 +1,7 @@
-'use strict';
+import db from '../db';
+import * as DataTypes from 'sequelize';
 
-const db = require('../db');
-const DataTypes = db.Sequelize;
-
-module.exports = db.define('artist', {
+const definitions = {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -11,7 +9,9 @@ module.exports = db.define('artist', {
       this.setDataValue('name', val.trim());
     }
   }
-}, {
+};
+
+const config = {
   instanceMethods: {
     getAlbums: function () {
       return db.model('album').findAll({
@@ -19,10 +19,14 @@ module.exports = db.define('artist', {
           model: db.model('song'),
           include: [{
             model: db.model('artist'),
-            where: { id: this.id } // makes this entire query an inner join
+            where: { id: this.id }
           }]
         }]
       });
     }
   }
-});
+};
+
+const Artist = db.define('artist', definitions, config);
+
+export default Artist;

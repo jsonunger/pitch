@@ -1,13 +1,11 @@
-'use strict';
+import path from 'path';
+import util from 'util';
+import chalk from 'chalk';
+import env from '../../../server/env';
 
-var path = require('path');
-var util = require('util');
-var chalk = require('chalk');
-var rootPath = path.join(__dirname, '../../../');
-var indexPath = path.join(rootPath, './public/index.html');
-var faviconPath = path.join(rootPath, './public/favicon.ico');
-
-var env = require(path.join(rootPath, './server/env'));
+const rootPath = path.join(__dirname, '../../../');
+const indexPath = path.join(rootPath, './public/index.html');
+const faviconPath = path.join(rootPath, './public/favicon.ico');
 
 function logMiddleware (req, res, next) {
   util.log('---NEW REQUEST---');
@@ -17,10 +15,10 @@ function logMiddleware (req, res, next) {
   next();
 }
 
-module.exports = function (app) {
+export default function (app) {
   app.setValue('env', env);
   app.setValue('projectRoot', rootPath);
   app.setValue('indexHTMLPath', indexPath);
   app.setValue('faviconPath', faviconPath);
   app.setValue('log', logMiddleware);
-};
+}

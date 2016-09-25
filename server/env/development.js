@@ -1,3 +1,3 @@
-module.exports = {
-  'DATABASE_URI': 'postgres://localhost:5432/juke'
+export default {
+  DATABASE_URI: 'postgres://localhost:5432/juke'
 };

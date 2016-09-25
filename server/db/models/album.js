@@ -1,10 +1,8 @@
-'use strict';
+import db from '../db';
+import * as DataTypes from 'sequelize';
+import addArtistList from './plugins/addArtistList';
 
-const db = require('../db');
-const addArtistList = require('./plugins/addArtistList');
-const DataTypes = db.Sequelize;
-
-module.exports = db.define('album', {
+const definitions = {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -21,25 +19,31 @@ module.exports = db.define('album', {
   artists: {
     type: DataTypes.VIRTUAL
   }
-}, {
+};
+
+const config = {
   defaultScope: {
     attributes: { exclude: ['cover', 'coverType'] }
   },
   scopes: {
-    populated: () => ({ // function form lets us use to-be-defined models
+    populated: () => ({
       include: [{
-        model: db.model('song') // populated with artists due to song model
+        model: db.model('song')
       }]
     })
   },
   instanceMethods: {
     addArtistList: addArtistList
   },
-  hooks: { // automatically adds an artist list if we have songs
+  hooks: {
     afterFind: function (queryResult) {
       if (!queryResult) return;
       if (!Array.isArray(queryResult)) queryResult = [queryResult];
       queryResult.forEach(item => item.addArtistList());
     }
   }
-});
+};
+
+const Album = db.define('album', definitions, config);
+
+export default Album;

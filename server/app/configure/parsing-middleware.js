@@ -1,11 +1,6 @@
-'use strict';
+import bodyParser from 'body-parser';
 
-var bodyParser = require('body-parser');
-
-module.exports = function (app) {
-
-  // Parse our POST and PUT bodies.
+export default function (app) {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-
-};
+}

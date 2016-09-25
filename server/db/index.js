@@ -1,18 +1,12 @@
-'use strict';
-const db = require('./db');
-const chalk = require('chalk');
+import db from './db';
+import chalk from 'chalk';
+import './models';
 
-// Require our models. Running each module registers the model into sequelize
-// so any other part of the application can simply call sequelize.model('User')
-// to get access to the User model.
-require('./models');
+const startDb = db.sync();
 
-// Syncing all the models at once. This promise is used by main.js.
-var syncedDbPromise = db.sync();
-
-syncedDbPromise.then(function () {
+startDb.then(function () {
   console.log(chalk.green('Sequelize models synced to PostgreSQL'));
 })
 .catch(err => console.error(err.stack));
 
-module.exports = syncedDbPromise;
+export default startDb;

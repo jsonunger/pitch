@@ -1,23 +1,23 @@
-'use strict';
+import db from '../db';
+import * as DataTypes from 'sequelize';
+import addArtistList from './plugins/addArtistList';
 
-const db = require('../db');
-const addArtistList = require('./plugins/addArtistList');
-const DataTypes = db.Sequelize;
-
-module.exports = db.define('playlist', {
+const definitions = {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
-    set: function (val) {
+    set(val) {
       this.setDataValue('name', val.trim());
     }
   },
   artists: {
     type: DataTypes.VIRTUAL
   }
-}, {
+};
+
+const config = {
   scopes: {
-    populated: () => ({ // function form lets us refer to undefined models
+    populated: () => ({
       include: [{
         model: db.model('song'),
         include: [{
@@ -28,23 +28,27 @@ module.exports = db.define('playlist', {
   },
   instanceMethods: {
     addArtistList: addArtistList,
-    addAndReturnSong: function (songId) { // `addSong` doesn't promise a song.
+    addAndReturnSong(songId) { // `addSong` doesn't promise a song.
       songId = String(songId);
       const addedToList = this.addSong(songId);
       const songFromDb = db.model('song').findById(songId);
       return DataTypes.Promise.all([addedToList, songFromDb])
       .spread((result, song) => song);
     },
-    removeSong: function (songId) {
+    removeSong(songId) {
       songId = String(songId);
       return this.removeSong(songId);
     }
   },
   hooks: { // automatically adds an artist list if we have songs
-    afterFind: function (queryResult) {
+    afterFind(queryResult) {
       if (!queryResult) return;
       if (!Array.isArray(queryResult)) queryResult = [queryResult];
       queryResult.forEach(item => item.addArtistList());
     }
   }
-});
+};
+
+const Playlist = db.define('playlist', definitions, config);
+
+export default Playlist;

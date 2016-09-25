@@ -1,15 +1,8 @@
 'use strict';
-
-// Require our models. Running each module registers the model into sequelize
-// so any other part of the application could call sequelize.model('Song')
-// to get access to the Song model.
-
-const Playlist = require('./playlist');
-const Artist = require('./artist');
-const Album = require('./album');
-const Song = require('./song');
-
-// Form the associations
+import Playlist from './playlist';
+import Artist from './artist';
+import Album from './album';
+import Song from './song';
 
 Song.belongsTo(Album);
 Album.hasMany(Song);
@@ -20,11 +13,4 @@ Song.belongsToMany(Artist, { through: 'artistSong' });
 Song.belongsToMany(Playlist, { through: 'playlistSong' });
 Playlist.belongsToMany(Song, { through: 'playlistSong' });
 
-// exported just in case, but can also be fetched via db.model('Album') etc.
-
-module.exports = {
-  Album: Album,
-  Song: Song,
-  Artist: Artist,
-  Playlist: Playlist
-};
+export { Playlist, Artist, Album, Song };

@@ -1,11 +1,8 @@
-'use strict';
+import { Router } from 'express';
+import mime from 'mime';
+import { Album } from '../../db/models';
 
-const express = require('express');
-const mime = require('mime');
-const router = express.Router();
-const models = require('../../db/models');
-const Album = models.Album;
-module.exports = router;
+const router = Router();
 
 router.get('/', function (req, res, next) {
   Album.findAll({ where: req.query })
@@ -51,3 +48,5 @@ router.get('/:albumId/songs/:songId', function (req, res) {
   if (!songToSend) return res.sendStatus(404);
   res.json(songToSend);
 });
+
+export { router as default };

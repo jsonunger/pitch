@@ -1,9 +1,7 @@
-'use strict';
+import db from '../db';
+import * as DataTypes from 'sequelize';
 
-const db = require('../db');
-const DataTypes = db.Sequelize;
-
-module.exports = db.define('song', {
+const definitions = {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -23,18 +21,24 @@ module.exports = db.define('song', {
     allowNull: false
   },
   buffer: {
-    type: DataTypes.BLOB, // sequelize alias, but in postgres actually `bytea`
+    type: DataTypes.BLOB,
     allowNull: false
   }
-}, {
+};
+
+const config = {
   defaultScope: {
     attributes: {
-      include: ['albumId'], // excluded by default, need for `song.getAlbum()`
+      include: ['albumId'],
       exclude: ['buffer']
     },
     include: [{
-      // defaultScope can't be func, so song must come after artist definition
       model: db.model('artist')
     }]
   }
-});
+};
+
+const Song = db.define('song', definitions, config);
+
+export default Song;
+

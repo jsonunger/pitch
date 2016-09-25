@@ -1,10 +1,6 @@
-'use strict';
+import _ from 'lodash';
 
-const _ = require('lodash');
-
-// for an entity with .songs, puts all unique artists on entity.artists
-
-module.exports = function () {
+export default function addArtistList () {
   if (!this.songs) return;
   const artistsById = {};
   this.songs.forEach(song => {
@@ -12,5 +8,5 @@ module.exports = function () {
       artistsById[artist.id] = artist;
     });
   });
-  this.artists = _.values(artistsById);
-};
+  this.artists = _.valus(artistsById);
+}

@@ -1,33 +1,24 @@
-'use strict';
-var chalk = require('chalk');
+import chalk from 'chalk';
+import startDb from './db';
+import { createServer } from 'http';
+import app from './app';
+const server = createServer();
 
-// Requires in ./db/index.js -- which returns a promise that represents
-// sequelize syncing its models to the postgreSQL database.
-var startDb = require('./db');
+const createApplication = () => server.on('request', app);
 
-// Create a node server instance! cOoL!
-var server = require('http').createServer();
+const startServer = () => {
+    const PORT = process.env.PORT || 1337;
+    const IP = process.env.IP || 'localhost';
 
-var createApplication = function () {
-    var app = require('./app');
-    server.on('request', app);
-};
-
-var startServer = function () {
-
-    var PORT = process.env.PORT || 1337;
-    var IP = process.env.IP || 'localhost';
-
-    server.listen(PORT, IP, function () {
-        console.log(chalk.blue(`Server started at ${chalk.magenta(`http://${IP}:${PORT}`)}`));
+    server.listen(PORT, IP, function() {
+      console.log(chalk.blue(`Server started at ${chalk.magenta(`http://${IP}:${PORT}`)}`));
     });
-
 };
 
 startDb
-.then(createApplication)
-.then(startServer)
-.catch(function (err) {
-    console.error(chalk.red(err.stack));
-    process.kill(1);
-});
+  .then(createApplication)
+  .then(startServer)
+  .catch(function (err) {
+      console.error(chalk.red(err.stack));
+      process.kill(1);
+  });

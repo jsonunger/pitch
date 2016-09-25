@@ -1,14 +1,10 @@
-'use strict';
+import { Router } from 'express';
+import mime from 'mime';
+import chalk from 'chalk';
+import sendSeekable from './middleware/sendSeekable';
+import { Song } from '../../db/models';
 
-const express = require('express');
-const router = express.Router();
-const mime = require('mime');
-const chalk = require('chalk');
-const sendSeekable = require('./middleware/sendSeekable');
-const models = require('../../db/models');
-const Song = models.Song;
-
-module.exports = router;
+const router = Router();
 
 router.get('/', function (req, res, next) {
   Song.findAll({ where: req.query })
@@ -19,7 +15,7 @@ router.get('/', function (req, res, next) {
 router.param('songId', function (req, res, next, id) {
   Song.findById(id)
   .then(song => {
-    if(!song) throw new Error('not found!');
+    if (!song) throw new Error('not found!');
     req.song = song;
     next();
     return null; // silences bluebird warning about promises inside of next
@@ -63,7 +59,7 @@ router.get('/:songId/image', function (req, res, next) {
 const audioCache = {}; // stores entire song buffers; bad idea for production
 
 router.get('/:songId/audio', sendSeekable, function (req, res, next) {
-  if(!req.song.extension) return next(new Error('No audio for song'));
+  if (!req.song.extension) return next(new Error('No audio for song'));
   const id = req.params.songId;
   // caching to help overcome PSQL's sllloowwww byte array format
   const cached = audioCache[id];
@@ -87,3 +83,5 @@ router.get('/:songId/audio', sendSeekable, function (req, res, next) {
   })
   .catch(next);
 });
+
+export { router as default };

@@ -1,10 +1,7 @@
-'use strict';
+import { Router } from 'express';
+import { Artist } from '../../db/models';
 
-const express = require('express');
-const router = express.Router();
-const models = require('../../db/models');
-const Artist = models.Artist;
-module.exports = router;
+const router = Router();
 
 router.get('/', function (req, res, next) {
   Artist.findAll({ where: req.query })
@@ -40,3 +37,5 @@ router.get('/:artistId/songs', function (req, res, next) {
   .then(songs => res.json(songs))
   .catch(next);
 });
+
+export { router as default };

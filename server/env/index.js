@@ -1,9 +1,15 @@
-var path = require('path');
-var devConfigPath = path.join(__dirname, './development.js');
-var productionConfigPath = path.join(__dirname, './production.js');
+import devConfig from './development';
+import prodConfig from './production';
 
+let env;
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require(productionConfigPath);
+  env = prodConfig;
 } else {
-  module.exports = require(devConfigPath);
+  env = devConfig;
 }
+
+const { DATABASE_URI } = env;
+
+export default env;
+
+export { DATABASE_URI };

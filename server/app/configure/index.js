@@ -1,21 +1,16 @@
-'use strict';
+import webpackMiddleware from './webpack-middleware';
+import variableMiddleware from './variable-middleware';
+import staticMiddleware from './static-middleware';
+import parsingMiddleware from './parsing-middleware';
 
-module.exports = function (app) {
-
-  // setValue and getValue are merely alias
-  // for app.set and app.get used in the less
-  // common way of setting application variables.
+export default function configure (app) {
   app.setValue = app.set.bind(app);
+  app.getValue = path => app.get(path);
 
-  app.getValue = function (path) {
-      return app.get(path);
-  };
-
-  require('./webpack-middleware')(app);
-  require('./app-variables')(app);
-  require('./static-middleware')(app);
-  require('./parsing-middleware')(app);
+  webpackMiddleware(app);
+  variableMiddleware(app);
+  staticMiddleware(app);
+  parsingMiddleware(app);
 
   app.use(app.getValue('log'));
-
-};
+}

@@ -1,12 +1,11 @@
-'use strict';
-const path = require('path');
-const chalk = require('chalk');
-const Sequelize = require('sequelize');
-const DATABASE_URI = require(path.join(__dirname, '../env')).DATABASE_URI;
+import chalk from 'chalk';
+import Sequelize from 'sequelize';
+import { DATABASE_URI } from '../env';
 
 console.log(chalk.yellow('Opening connection to PostgreSQL'));
 
-// create the database instance
-module.exports = new Sequelize(DATABASE_URI, {
-  logging: false // set to console.log to see the raw SQL queries
+const db = new Sequelize(DATABASE_URI, {
+  logging: false
 });
+
+export default db;

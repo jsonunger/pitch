@@ -1,11 +1,7 @@
-'use strict';
+import { Router } from 'express';
+import { Playlist } from '../../db/models';
 
-const Promise = require('bluebird');
-const express = require('express');
-const router = express.Router();
-const models = require('../../db/models');
-const Playlist = models.Playlist;
-module.exports = router;
+const router = Router();
 
 router.get('/', function (req, res, next) {
   Playlist.findAll({ where: req.query })
@@ -23,10 +19,10 @@ router.post('/', function (req, res, next) {
 router.param('playlistId', function (req, res, next, id) {
   Playlist.scope('populated').findById(id)
   .then(playlist => {
-    if(!playlist) throw new Error('not found!');
+    if (!playlist) throw new Error('not found!');
     req.playlist = playlist;
     next();
-    return null; // silences bluebird warning about promises inside of next
+    return null;
   })
   .catch(next);
 });
@@ -81,3 +77,5 @@ router.delete('/:playlistId/songs/:songId', function (req, res, next) {
   .then(() => res.sendStatus(204))
   .catch(next);
 });
+
+export { router as default };

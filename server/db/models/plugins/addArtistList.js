@@ -8,5 +8,5 @@ export default function addArtistList () {
       artistsById[artist.id] = artist;
     });
   });
-  this.artists = _.valus(artistsById);
+  this.artists = _.values(artistsById);
 }

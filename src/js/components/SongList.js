@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import '../../scss/songList';
 
-const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSong }) => {
+const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSong, currentList }) => {
   if (songs.every(song => song.playlistSong)) {
     songs.sort((a, b) => new Date(a.playlistSong.createdAt) - new Date(b.playlistSong.createdAt));
   }
@@ -17,7 +17,7 @@ const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSo
       </thead>
       <tbody id="songList">
         {songs.map((song, i) => (
-          <tr onDoubleClick={() => playSong(song, songs)} className={ song.id === currentSong.id ? 'active' : '' } key={song.id}>
+          <tr onDoubleClick={() => playSong(song, songs)} className={ song.id === currentSong.id && songs == currentList ? 'active' : '' } key={song.id}>
             <td>{song.name}</td>
             <td>
               {
@@ -43,7 +43,8 @@ SongList.propTypes = {
   removeSong: PropTypes.func,
   playlist: PropTypes.object,
   playSong: PropTypes.func,
-  currentSong: PropTypes.object
+  currentSong: PropTypes.object,
+  currentList: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default SongList;

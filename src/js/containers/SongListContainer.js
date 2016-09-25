@@ -5,6 +5,7 @@ import { removeSong } from '../action-reducers/playlist';
 
 function mapStateToProps (state) {
   return {
+    currentList: state.currentList,
     currentSong: state.currentSong,
     playlist: state.playlist
   };

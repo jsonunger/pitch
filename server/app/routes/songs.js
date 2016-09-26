@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router as route } from 'express';
 import mime from 'mime';
 import chalk from 'chalk';
 import sendSeekable from './middleware/sendSeekable';
 import { Song } from '../../db/models';
 
-const router = Router();
+const router = route();
 
 router.get('/', (req, res, next) => {
   Song.findAll({ where: req.query })
@@ -17,7 +17,8 @@ router.param('songId', (req, res, next, id) => {
     .then(song => {
       if (!song) throw new Error('Song not found!');
       req.song = song;
-      return next();
+      next();
+      return null;
     })
     .catch(next);
 });

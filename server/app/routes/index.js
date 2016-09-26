@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router as route } from 'express';
 import artistRoutes from './artists';
 import albumRoutes from './albums';
 import playlistRoutes from './playlists';
 import songRoutes from './songs';
 
-const routes = Router();
+const routes = route();
 
 routes.use('/artists', artistRoutes);
 routes.use('/albums', albumRoutes);

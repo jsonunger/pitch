@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import { Router as route } from 'express';
 import { Playlist } from '../../db/models';
 
-const router = Router();
+const router = route();
 
 router.route('/')
   .get((req, res, next) => {

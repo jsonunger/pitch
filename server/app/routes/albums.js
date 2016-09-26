@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { Router as route } from 'express';
 import mime from 'mime';
 import { Album } from '../../db/models';
 
-const router = Router();
+const router = route();
 
 router.get('/', (req, res, next) => {
   Album.findAll({ where: req.query })
@@ -15,7 +15,8 @@ router.param('albumId', (req, res, next, id) => {
     .then(album => {
       if (!album) throw new Error('Album not found!');
       req.album = album;
-      return next();
+      next();
+      return null;
     })
     .catch(next);
 });

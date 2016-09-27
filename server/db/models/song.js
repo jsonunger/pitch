@@ -1,27 +1,19 @@
 import db from '../db';
-import * as DataTypes from 'sequelize';
+import * as Sequelize from 'sequelize';
 
 const definitions = {
   name: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
-    set: function (val) {
+    set(val) {
       this.setDataValue('name', val.trim());
     }
   },
-  genres: {
-    type: DataTypes.ARRAY(DataTypes.STRING)
+  genre: {
+    type: Sequelize.STRING
   },
-  extension: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  size: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  buffer: {
-    type: DataTypes.BLOB,
+  url: {
+    type: Sequelize.STRING,
     allowNull: false
   }
 };
@@ -29,12 +21,22 @@ const definitions = {
 const config = {
   defaultScope: {
     attributes: {
-      include: ['albumId'],
-      exclude: ['buffer']
-    },
-    include: [{
-      model: db.model('artist')
-    }]
+      include: ['albumId']
+    }
+  },
+  scopes: {
+    populated: () => ({
+      include: [{
+        model: db.model('artist')
+      }]
+    })
+  },
+  instanceMethods: {
+    toJSON() {
+      const plain = this.get({ plain: true });
+      delete plain.url;
+      return plain;
+    }
   }
 };
 

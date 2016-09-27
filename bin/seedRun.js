@@ -1,142 +1,139 @@
-import { extname, resolve, isAbsolute } from 'path';
-import _ from 'lodash';
+import itunes from 'itunes-library-stream';
+import status from 'node-status';
+import filesystem from 'fs';
+import program from 'commander';
 import Promise from 'bluebird';
-import fs from 'fs-extra';
-import chalk from 'chalk';
-import { dirWalk, isMp3 } from './helper';
-import grabMetadata from './metadataWrapper';
 import db from '../server/db/db';
-import { Artist, Album, Song } from '../server/db/models';
+import '../server/db/models';
+import { keyFor, grabXML, log, isValidData } from './helper';
 
-let dir = process.argv[2];
-if (!dir) {
-  console.error('Please provide the path to your music folder.');
-  process.exit();
-} else if (!isAbsolute(dir)) {
-  dir = resolve(__dirname, '..', dir);
-}
+const fs = Promise.promisifyAll(filesystem);
+const KEY = Symbol('key');
+const TRACKS = Symbol('TRACKS');
+const DEFAULT_TRACK_LIMIT = 250;
 
-Promise.promisifyAll(fs);
 
-const B_PER_KB = 1000;
-const KB_PER_MB = 1000;
+program
+  .usage('[options] [seed.xml ...]')
+  .description('Seeds the pitch database with metadata from an XML file. By default, we\'ll import your iTunes library')
+  .option('-f, --force', 'Force sync (will delete everything in the db)')
+  .option('-l, --limit <num>', `Limit total tracks imported to <num> (default ${DEFAULT_TRACK_LIMIT}`, parseInt)
+  .option('-u, --unlimited', 'Import unlimited tracks')
+  .parse(process.argv);
 
-const extractMetaData = filepath => dirWalk(filepath)
-  .then(filesNames => filesNames.filter(isMp3))
-  .map(name => grabMetadata(name));
+status[TRACKS] = {
+  total: status.addItem('total', { color: 'magenta' }),
+  skipped: status.addItem('skipped', { color: 'yellow' }),
+  seeding: status.addItem('seeding', { color: 'green' }),
+  seeded: status.addItem('seeded', { color: 'blue' })
+};
 
-const formatSize = bytes => `${Math.round(bytes / B_PER_KB) / KB_PER_MB} MB`;
+program[TRACKS] = program.unlimited ? Infinity : (program.limit || DEFAULT_TRACK_LIMIT);
 
-const myThis = {};
+let xmlFile = grabXML(program.args[0]);
 
-const start = new Date();
-
-Promise.resolve(db.drop({ cascade: true })) // clear the database
-  .bind({ docsToSave: {} })
-  .then(() => { // get song metadata and sync db at same time
-    console.log('reading file metadata and emptying database');
-    return Promise.join(extractMetaData(dir), db.sync({ force: true }));
-  })
-  .spread(metadata => { // create the artists
-    console.log('creating unique artists by name');
-    myThis.analyzedFiles = metadata;
-    let artistNames = _(myThis.analyzedFiles)
-      .map('artist')
-      .flatten()
-      .uniq()
-      .value();
-    return Promise.map(artistNames, artistName => {
-      return Artist.findOrCreate({
-          where: {
-            name: artistName
-          }
-        })
-        .then(artists => artists[0]);
-    });
-  })
-  .then(artists => { // create the albums
-    console.log('creating albums by name');
-    myThis.artists = _.keyBy(artists, instance => instance.dataValues.name);
-    let albumNames = _(myThis.analyzedFiles)
-      .map('album')
-      .uniq()
-      .value();
-    return Promise.map(albumNames, albumName => {
-      return Album.findOrCreate({
-          where: {
-            name: albumName
-          }
-        })
-        .then(albums => albums[0]);
-    });
-  })
-  .then(albums => {
-    myThis.albums = _.keyBy(albums, instance => instance.dataValues.name);
-  })
-  .then(() => { // create the songs
-    console.log('creating songs and reading in files');
-    myThis.totalSize = 0;
-    let savedCount = 0;
-    let limit = myThis.analyzedFiles.length;
-    let allSongsProcessed = myThis.analyzedFiles.map(file => {
-      // create initial un-persisted song instance
-      file.song = Song.build({
-        name: file.title,
-        genres: file.genre,
-        extension: extname(file.path),
+const [Artist, Album, Song, ArtistSong] = ['artists', 'albums', 'songs', 'artistSong'].map(table => {
+  function findOrCreate(columns) {
+    const key = keyFor(columns, KEY);
+    if (findOrCreate[key]) {
+      log.debug `cache hit for ${key}, with inner key ${findOrCreate[key][KEY]}`;
+      return findOrCreate[key];
+    }
+    const pKeyExpr = (findOrCreate.primaryKey || ['id']).map(k => `"${k}"`).join(',');
+    let keys, values;
+    let self = findOrCreate[key] = Promise.props(columns)
+      .then(cols => {
+        keys = Object.keys(cols);
+        values = keys.map(k => cols[k]);
+        return cols;
+      })
+      .then(() => {
+        return db.query(`SELECT ${pKeyExpr} from "${table}" WHERE ${keys.map(col => `"${col}"=?`).join(' AND ')}`, { replacements: values, type: 'SELECT' });
+      })
+      .then(results => {
+        if (results.length) {
+          ++findOrCreate.found;
+          return results;
+        } else {
+          return db.query(`INSERT INTO "${table}" (${keys.map(c => `"${c}"`).join(', ')}, "createdAt", "updatedAt") VALUES (${keys.map(() => '?')}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING ${pKeyExpr}`, { replacements: values, type: 'INSERT' });
+        }
+      })
+      .then(results => {
+        ++findOrCreate.created;
+        return results[0].id;
+      })
+      .catch(err => {
+        log.error `warning: ${err.message}`;
+        log.error `   in findOrCreate for ${key} into ${table}`;
+        ++findOrCreate.errors;
+        return null;
       });
-      // determine foreign keys
-      let artistIds = file.artist.map(artist => myThis.artists[artist].dataValues.id);
-      let albumId = myThis.albums[file.album].dataValues.id;
-      // save binary data into song
-      return fs.readFileAsync(file.path)
-        .then(buffer => {
-          console.log(chalk.grey('read: ' + file.song.name));
-          myThis.totalSize += buffer.length;
-          file.song.buffer = buffer;
-          file.song.size = buffer.length;
-          return file.song.save();
-        })
-        .then(song => {
-          savedCount++;
-          file.song = song;
-          console.log(chalk.green('✓') + chalk.grey(` saved: ${song.name} — ${formatSize(song.size)} (${savedCount}/${limit})`));
-          // write to the song-artist & song-album join tables
-          let madeArtistAssociations = song.addArtists(artistIds);
-          let madeAlbumAssociation = song.setAlbum(albumId);
-          return Promise.all([madeArtistAssociations, madeAlbumAssociation]);
-        });
+    self[KEY] = key;
+    log.debug `added key ${self[KEY]}`;
+    findOrCreate[key] = self;
+    return self;
+  }
+
+  findOrCreate.found = findOrCreate.created = findOrCreate.errors = 0;
+  findOrCreate.table = table;
+  return findOrCreate;
+});
+
+ArtistSong.primaryKey = ['artistId', 'songId'];
+
+fs.statAsync(xmlFile)
+  .then(() => {
+    status.start({
+      interval: 125,
+      pattern: 'XML tracks @ {uptime} | Total: {total.magenta} | Skipped: {skipped.yellow} | Seeding: {seeding.green} | Seeded: {seeded.blue}'
     });
-    return Promise.all(allSongsProcessed);
+    return db.sync({ force: program.force });
   })
   .then(() => {
-    console.log('seeded ' + myThis.analyzedFiles.length + ' songs (' + formatSize(myThis.totalSize) + ')');
-    console.log('adding covers to albums based on song data');
-    myThis.analyzedFiles.forEach(file => {
-      var album = myThis.albums[file.album];
-      if (file.picture && file.picture.data) {
-        album.cover = file.picture.data;
-        album.coverType = file.picture.format;
-      }
+    const tracks = [];
+    return new Promise(resolve => {
+      const xmlStream = fs.createReadStream(xmlFile);
+      xmlStream.pipe(itunes.createTrackStream())
+        .on('data', data => {
+          status[TRACKS].total.inc(1);
+          if (status[TRACKS].seeding.val >= program[TRACKS] || !isValidData(data)) {
+            status[TRACKS].skipped.inc(1);
+            return;
+          }
+          status[TRACKS].seeding.inc(1);
+          const seeding = ArtistSong({
+            artistId: Artist({
+              name: data.Artist
+            }),
+            songId: Song({
+              name: data.Name,
+              url: data.Location,
+              genre: data.Genre,
+              albumId: Album({
+                name: data.Album,
+                artistId: Artist({
+                  name: data.Artist
+                })
+              })
+            })
+          });
+          tracks.push(seeding);
+          seeding.then(() => status[TRACKS].seeded.inc(1));
+        })
+        .on('error', err => console.error(err))
+        .on('end', () => resolve(Promise.all(tracks)));
     });
-    // save albums
-    let albums = _(myThis.albums)
-      .values()
-      .invokeMap('save')
-      .value();
-    return Promise.all(albums);
   })
-  .then(saved => {
-    console.log(chalk.green(`seeding of ${saved.length} albums complete!`));
+  .then(() => {
+    process.exit();
   })
   .catch(err => {
-    console.error(chalk.red(err));
-    console.error(err.stack);
-  })
-  .finally(() => {
-    const end = new Date();
-    console.log('Terminated after %ds', (end - start) / 1000);
-    // Sequelize holds the connection open for ~10 secs unless we tell it not to
-    db.close();
-    return null; // silences Bluebird warning about non-returned promise
+    console.error(err.message);
+    process.exit(1);
   });
+
+process.on('exit', code => {
+  if (code === 0) {
+    console.log([Artist, Album, Song, ArtistSong].map(model => `${model.table}: ${model.found} found, ${model.created} created, ${model.errors} errors`).join('\n'));
+  }
+});

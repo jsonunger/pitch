@@ -6,6 +6,7 @@ import Song from './song';
 
 Song.belongsTo(Album);
 Album.hasMany(Song);
+Album.belongsTo(Artist);
 
 Artist.belongsToMany(Song, { through: 'artistSong' });
 Song.belongsToMany(Artist, { through: 'artistSong' });

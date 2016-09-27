@@ -5,7 +5,8 @@ import { DATABASE_URI } from '../env';
 console.log(chalk.yellow('Opening connection to PostgreSQL'));
 
 const db = new Sequelize(DATABASE_URI, {
-  logging: false
+  logging: false,
+  native: true
 });
 
 export default db;

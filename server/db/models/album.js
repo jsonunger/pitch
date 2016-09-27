@@ -1,46 +1,31 @@
 import db from '../db';
-import * as DataTypes from 'sequelize';
-import addArtistList from './plugins/addArtistList';
+import * as Sequelize from 'sequelize';
+import unique from './plugins/uniqueThrough';
 
 const definitions = {
   name: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
-    set: function (val) {
+    set(val) {
       this.setDataValue('name', val.trim());
     }
   },
-  cover: {
-    type: DataTypes.BLOB
-  },
-  coverType: {
-    type: DataTypes.STRING
-  },
-  artists: {
-    type: DataTypes.VIRTUAL
-  }
+  artists: unique('artists').through('songs')
 };
 
 const config = {
-  defaultScope: {
-    attributes: { exclude: ['cover', 'coverType'] }
-  },
   scopes: {
+    songIds: () => ({
+      include: [{
+        model: db.model('song'),
+        attributes: ['id']
+      }]
+    }),
     populated: () => ({
       include: [{
-        model: db.model('song')
+        model: db.model('song').scope('defaultScope', 'populated')
       }]
     })
-  },
-  instanceMethods: {
-    addArtistList: addArtistList
-  },
-  hooks: {
-    afterFind: function (queryResult) {
-      if (!queryResult) return;
-      if (!Array.isArray(queryResult)) queryResult = [queryResult];
-      queryResult.forEach(item => item.addArtistList());
-    }
   }
 };
 

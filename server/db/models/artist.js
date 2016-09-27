@@ -1,11 +1,11 @@
 import db from '../db';
-import * as DataTypes from 'sequelize';
+import * as Sequelize from 'sequelize';
 
 const definitions = {
   name: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
-    set: function (val) {
+    set(val) {
       this.setDataValue('name', val.trim());
     }
   }
@@ -13,7 +13,7 @@ const definitions = {
 
 const config = {
   instanceMethods: {
-    getAlbums: function () {
+    getAlbums() {
       return db.model('album').findAll({
         include: [{
           model: db.model('song'),

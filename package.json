@@ -7,8 +7,7 @@
     "start": "nodemon --watch server -e js,html server/start.js",
     "seed": "node ./bin/seed",
     "db-init": "./db-init.sh",
-    "build": "NODE_ENV='production' webpack -c -p --config ./webpack.prod.config.js",
-    "postinstall": "if [ -n \"$npm_config_production\" ]; then npm run seed -- -u ./music.xml; fi"
+    "build": "NODE_ENV='production' webpack -c -p --config ./webpack.prod.config.js"
   },
   "dependencies": {
     "axios": "^0.14.0",

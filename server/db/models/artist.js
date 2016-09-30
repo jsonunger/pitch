@@ -8,6 +8,12 @@ const definitions = {
     set(val) {
       this.setDataValue('name', val.trim());
     }
+  },
+  sortName: {
+    type: Sequelize.STRING,
+    set(val) {
+      this.setDataValue('sortName', val.trim());
+    }
   }
 };
 

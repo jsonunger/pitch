@@ -10,7 +10,13 @@ const definitions = {
       this.setDataValue('name', val.trim());
     }
   },
-  artists: unique('artists').through('songs')
+  artists: unique('artists').through('songs'),
+  sortName: {
+    type: Sequelize.STRING,
+    set(val) {
+      this.setDataValue('sortName', val.trim());
+    }
+  }
 };
 
 const config = {

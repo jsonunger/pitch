@@ -1,7 +1,8 @@
-import { Router as route } from 'express';
+/* eslint-disable new-cap */
+import { Router } from 'express';
 import { Playlist } from '../../db/models';
 
-const router = route();
+const router = Router();
 
 router.route('/')
   .get((req, res, next) => {
@@ -18,7 +19,11 @@ router.route('/')
 router.param('playlistId', function(req, res, next, id) {
   Playlist.scope('populated').findById(id)
     .then(playlist => {
-      if (!playlist) throw new Error('Playlist not found!');
+      if (!playlist) {
+        const err = new Error('Playlist not found!');
+        err.status = 404;
+        throw err;
+      }
       req.playlist = playlist;
       next();
       return null;
@@ -50,7 +55,7 @@ router.route('/:playlistId/songs')
           err.status = 409;
           err.message = 'Song is already in the playlist.';
         }
-        next(err);
+        return next(err);
       });
   });
 

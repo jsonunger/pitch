@@ -9,7 +9,7 @@ export function keyFor (obj, key) {
 
 export function grabXML (filepath) {
   if (!filepath) {
-    return resolve(userhome(), 'Music/iTunes/iTunes Music Library.xml');
+    return process.env.NODE_ENV === 'production' ? '/noPathGiven' : resolve(userhome(), 'Music/iTunes/iTunes Music Library.xml');
   } else if (!isAbsolute(filepath)) {
     return resolve(__dirname, '..', filepath);
   } else {
@@ -30,7 +30,7 @@ log.error = (pieces, ...cooked) => console.error(interp(pieces, cooked));
 export { log };
 
 export function isValidData (data) {
-  return !!(data.Location && data.Name && data.Artist && data.Album && data.Kind && (data.Kind.indexOf('audio') !== -1) && (data.Kind.indexOf('Apple Lossless') === -1) && (data.Kind.indexOf('app') === -1));
+  return !!(data.Location && data.Name && data.Artist && data.Album && data['Track Number'] && data.Kind && (data.Kind.indexOf('audio') !== -1) && (data.Kind.indexOf('Apple Lossless') === -1) && (data.Kind.indexOf('app') === -1));
 }
 
 export default { keyFor, grabXML, log, isValidData };

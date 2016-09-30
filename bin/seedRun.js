@@ -10,7 +10,7 @@ import { keyFor, grabXML, log, isValidData } from './helper';
 const fs = Promise.promisifyAll(filesystem);
 const KEY = Symbol('key');
 const TRACKS = Symbol('TRACKS');
-const DEFAULT_TRACK_LIMIT = 250;
+const DEFAULT_TRACK_LIMIT = 150;
 
 
 program
@@ -98,21 +98,27 @@ fs.statAsync(xmlFile)
           status[TRACKS].total.inc(1);
           if (status[TRACKS].seeding.val >= program[TRACKS] || !isValidData(data)) {
             status[TRACKS].skipped.inc(1);
+            log `SKIPPED: Song: ${data.Name}, Artist: ${data.Artist}, Album: ${data.Album}`;
             return;
           }
           status[TRACKS].seeding.inc(1);
           const seeding = ArtistSong({
             artistId: Artist({
-              name: data.Artist
+              name: data.Artist,
+              sortName: data['Sort Artist'] || data.Artist
             }),
             songId: Song({
               name: data.Name,
               url: data.Location,
               genre: data.Genre,
+              trackNum: data['Track Number'],
+              sortName: data['Sort Name'] || data.Name,
               albumId: Album({
                 name: data.Album,
+                sortName: data['Sort Album'] || data.Album,
                 artistId: Artist({
-                  name: data.Artist
+                  name: data.Artist,
+                  sortName: data['Sort Artist'] || data.Artist
                 })
               })
             })

@@ -1,7 +1,8 @@
-import { Router as route } from 'express';
+/* eslint-disable new-cap */
+import { Router } from 'express';
 import { Artist } from '../../db/models';
 
-const router = route();
+const router = Router();
 
 router.get('/', (req, res, next) => {
   Artist.findAll({ where: req.query })
@@ -12,7 +13,11 @@ router.get('/', (req, res, next) => {
 router.param('artistId', (req, res, next, id) => {
   Artist.findById(id)
     .then(artist => {
-      if (!artist) throw new Error('Artist not found!');
+      if (!artist) {
+        const err = new Error('Artist not found!');
+        err.status = 404;
+        throw err;
+      }
       req.artist = artist;
       next();
       return null;

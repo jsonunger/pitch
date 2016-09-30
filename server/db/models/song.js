@@ -15,6 +15,15 @@ const definitions = {
   url: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  trackNum: {
+    type: Sequelize.INTEGER
+  },
+  sortName: {
+    type: Sequelize.STRING,
+    set(val) {
+      this.setDataValue('sortName', val.trim());
+    }
   }
 };
 
@@ -28,6 +37,11 @@ const config = {
     populated: () => ({
       include: [{
         model: db.model('artist')
+      }]
+    }),
+    album: () => ({
+      include: [{
+        model: db.model('album')
       }]
     })
   },

@@ -1,10 +1,11 @@
-import { Router as route } from 'express';
+/* eslint-disable new-cap */
+import { Router } from 'express';
 import artistRoutes from './artists';
 import albumRoutes from './albums';
 import playlistRoutes from './playlists';
 import songRoutes from './songs';
 
-const routes = route();
+const routes = Router();
 
 routes.use('/artists', artistRoutes);
 routes.use('/albums', albumRoutes);

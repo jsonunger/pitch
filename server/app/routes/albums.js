@@ -1,19 +1,23 @@
-import { Router as route } from 'express';
-import mime from 'mime';
+/* eslint-disable new-cap */
+import { Router } from 'express';
 import { Album } from '../../db/models';
 
-const router = route();
+const router = Router();
 
 router.get('/', (req, res, next) => {
-  Album.findAll({ where: req.query })
+  Album.scope('songIds').findAll({ where: req.query })
     .then(albums => res.json(albums))
     .catch(next);
 });
 
 router.param('albumId', (req, res, next, id) => {
-  Album.scope('defaultScope', 'populated').findById(id)
+  Album.scope('populated').findById(id)
     .then(album => {
-      if (!album) throw new Error('Album not found!');
+      if (!album) {
+        const err = new Error('Album not found!');
+        err.status = 404;
+        throw err;
+      }
       req.album = album;
       next();
       return null;
@@ -23,17 +27,7 @@ router.param('albumId', (req, res, next, id) => {
 
 router.get('/:albumId', (req, res) => res.json(req.album));
 
-router.get('/:albumId/image', (req, res, next) => {
-  Album.findById(req.params.albumId, {
-      attributes: ['cover', 'coverType']
-    })
-    .then(album => {
-      if (!album.cover || !album.coverType) return next(new Error('no cover'));
-      res.set('Content-Type', mime.lookup(album.coverType));
-      res.send(album.cover);
-    })
-    .catch(next);
-});
+router.get('/:albumId/image', (req, res) => res.redirect(`/api/songs/${req.album.songs[0].id}/image`));
 
 router.get('/:albumId/songs/', (req, res) => res.json(req.album.songs));
 

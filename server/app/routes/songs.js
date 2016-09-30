@@ -1,21 +1,28 @@
-import { Router as route } from 'express';
+/* eslint-disable new-cap */
+import { Router } from 'express';
 import mime from 'mime';
-import chalk from 'chalk';
-import sendSeekable from './middleware/sendSeekable';
+import { parse } from 'url';
+import request from 'request';
+import fs from 'fs';
+import mm from 'musicmetadata';
 import { Song } from '../../db/models';
 
-const router = route();
+const router = Router();
 
 router.get('/', (req, res, next) => {
-  Song.findAll({ where: req.query })
+  Song.scope('defaultScope', 'populated', 'album').findAll({ where: req.query })
     .then(songs => res.json(songs))
     .catch(next);
 });
 
 router.param('songId', (req, res, next, id) => {
-  Song.findById(id)
+  Song.scope('defaultScope', 'populated').findById(id)
     .then(song => {
-      if (!song) throw new Error('Song not found!');
+      if (!song) {
+        const err = new Error('Song not found!');
+        err.status = 404;
+        throw err;
+      }
       req.song = song;
       next();
       return null;
@@ -25,56 +32,22 @@ router.param('songId', (req, res, next, id) => {
 
 router.get('/:songId', (req, res) => res.json(req.song));
 
+function open (url) {
+  const parsed = parse(url);
+  return parsed.protocol === 'file:' ? fs.createReadStream(decodeURIComponent(parsed.path)) : request(url);
+}
+
 router.get('/:songId/image', (req, res, next) => {
-  req.song.getAlbum({
-      attributes: ['cover', 'coverType']
-    })
-    .then(album => {
-      if (!album.cover || !album.coverType) throw new Error('no cover');
-      res.set('Content-Type', mime.lookup(album.coverType));
-      res.send(album.cover);
-    })
-    .catch(next);
+  mm(open(req.song.url), (err, metadata) => {
+    if (err) return next(err);
+    const pic = metadata.picture[0];
+    pic ? res.set('Content-Type', mime.lookup(pic.format)).send(pic.data) : res.redirect('/default-album.jpg');
+  });
 });
 
-/**
- * I am storing song audio directly in the db as `bytea` columns.
- * However, retrieving this data is slow for anything over a couple Mb.
- * This is mitigated by adding audio to an in-memory cache on the first load
- * so that subsequent requests do not hit the slow db retrieval.
- * That cache is lost on every server restart.
- *
- * In production, the audio files would be stored fully in something like S3, and
- * the db songs would have filepaths. Then Express could stream the file
- * contents near-instantly, plus there would be no need for a cache.
- */
-
-const audioCache = {}; // stores entire song buffers; bad idea for production
-
-router.get('/:songId/audio', sendSeekable, (req, res, next) => {
-  if (!req.song.extension) return next(new Error('No audio for song'));
-  const id = req.params.songId;
-  // caching to help overcome PSQL's sllloowwww byte array format
-  const cached = audioCache[id];
-  if (cached) return res.sendSeekable(cached.buffer, cached.options);
-  // first-time lookup is still slow :-(
-  console.log(chalk.yellow(`Audio ${id}: fetching for the first time.`));
-  const options = {
-    type: mime.lookup(req.song.extension),
-    length: req.song.size
-  };
-  Song.findById(id, {
-      attributes: ['buffer']
-    })
-    .then(song => {
-      console.log(chalk.blue(`Audio ${id}: fetched; now caching and sending.`));
-      audioCache[id] = {
-        options: options,
-        buffer: song.buffer
-      };
-      res.sendSeekable(song.buffer, options);
-    })
-    .catch(next);
+router.get('/:songId/audio', (req, res, next) => {
+  const url = parse(req.song.url);
+  url.protocol === 'file:' ? res.sendFile(decodeURIComponent(url.path)) : res.redirect(req.song.url);
 });
 
 export { router as default };

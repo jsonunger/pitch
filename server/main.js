@@ -8,10 +8,9 @@ const createApplication = () => server.on('request', app);
 
 const startServer = () => {
     const PORT = process.env.PORT || 1337;
-    const IP = process.env.IP || 'localhost';
 
-    server.listen(PORT, IP, function() {
-      console.log(chalk.blue(`Server started at ${chalk.magenta(`http://${IP}:${PORT}`)}`));
+    server.listen(PORT, function() {
+      console.log(chalk.blue(`Server started on port ${chalk.magenta(PORT)}`));
     });
 };
 

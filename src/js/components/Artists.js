@@ -2,12 +2,14 @@ import React, { Component, PropTypes } from 'react';
 import ArtistList from './ArtistList';
 
 class Artists extends Component {
-  componentDidMount() {
-    fetch(new Request('/api/artists'))
-      .then(res => res.json())
-      .then(result => {
-        console.log(result);
-      });
+  static propTypes = {
+    artists: PropTypes.arrayOf(PropTypes.object).isRequired,
+    setFilter: PropTypes.func.isRequired,
+    unsetFilter: PropTypes.func.isRequired
+  }
+
+  constructor(props) {
+    super(props);
   }
 
   componentWillUnmount() {
@@ -28,11 +30,5 @@ class Artists extends Component {
     );
   }
 }
-
-Artists.propTypes = {
-  artists: PropTypes.arrayOf(PropTypes.object),
-  setFilter: PropTypes.func.isRequired,
-  unsetFilter: PropTypes.func.isRequired
-};
 
 export default Artists;

@@ -3,6 +3,13 @@ import SongList from '../containers/SongListContainer';
 import ChooseSong from '../containers/ChooseSongContainer';
 
 class Playlist extends Component {
+  static propTypes = {
+    fetchPlaylist: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
+    unset: PropTypes.func.isRequired,
+    playlist: PropTypes.object.isRequired
+  }
+
   constructor(props) {
     super(props);
   }
@@ -24,10 +31,13 @@ class Playlist extends Component {
 
   render() {
     const { playlist } = this.props;
+    const songs = playlist.songs.filter(s => s.playlistSong);
+    songs.sort((a, b) => new Date(a.playlistSong.createdAt) - new Date(b.playlistSong.createdAt));
+    songs.push(...playlist.songs.filter(s => !s.playlistSong));
     return (
       <div>
         <h3>{ playlist.name }</h3>
-        <SongList songs={ playlist.songs } inPlaylist={ true } />
+        <SongList songs={ songs } inPlaylist={ true } />
         {!playlist.songs.length && <small>No songs.</small>}
         <hr />
         <ChooseSong />
@@ -35,13 +45,5 @@ class Playlist extends Component {
     );
   }
 }
-
-Playlist.propTypes = {
-  fetchPlaylist: PropTypes.func,
-  params: PropTypes.object,
-  unset: PropTypes.func,
-  playlist: PropTypes.object,
-  removeSong: PropTypes.func
-};
 
 export default Playlist;

@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { sortByName } from '../utils/convert';
 
 const ArtistList = ({ artists }) => {
+  sortByName(artists);
   return (
     <div className="list-group">
       {artists.map(artist => (

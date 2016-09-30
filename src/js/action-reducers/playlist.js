@@ -44,14 +44,15 @@ export const fetchPlaylist = playlistId => (dispatch, getState) => {
 };
 
 export const addSong = (playlistId, id) => (dispatch, getState) => {
-  const changingCurrentList = getState().currentList == getState().playlist.songs;
+  const { currentList } = getState();
+  const changingCurrentList = currentList.listType === 'playlist' && currentList.id === playlistId;
   return post(`/api/playlists/${playlistId}/songs`, { id })
     .then(convertSong)
     .then(song => dispatch(addSongToPlaylist(song)))
     .then(() => {
       if (changingCurrentList) {
         const { playlist } = getState();
-        return dispatch(setCurrentList(playlist.songs));
+        return dispatch(setCurrentList(playlist.songs, playlist.id, 'playlist'));
       } else {
         return;
       }
@@ -60,16 +61,21 @@ export const addSong = (playlistId, id) => (dispatch, getState) => {
 };
 
 export const removeSong = (playlistId, id) => (dispatch, getState) => {
-  const changingCurrentList = getState().currentList == getState().playlist.songs;
+  const { currentList } = getState();
+  const changingCurrentList = currentList.listType === 'playlist' && currentList.id === playlistId;
   return del(`/api/playlists/${playlistId}/songs/${id}`)
     .then(() => dispatch(removeSongFromPlaylist(id)))
     .then(() => {
       if (changingCurrentList) {
         const { playlist } = getState();
-        dispatch(setCurrentList(playlist.songs));
+        return dispatch(setCurrentList(playlist.songs, playlist.id, 'playlist'));
+      } else {
+        return;
       }
-      const { currentSong, currentList } = getState();
-      if (!currentList.length) {
+    })
+    .then(() => {
+      const { currentSong } = getState();
+      if (!getState().currentList.songs.length) {
         return dispatch(pauseMusic());
       } else if (+id === currentSong.id) {
         return dispatch(next());

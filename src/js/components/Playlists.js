@@ -33,7 +33,7 @@ Playlists.propTypes = {
   playlists: PropTypes.arrayOf(PropTypes.object).isRequired,
   del: PropTypes.func.isRequired,
   playlist: PropTypes.object,
-  routes: PropTypes.arrayOf(PropTypes.object)
+  routes: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 export default Playlists;

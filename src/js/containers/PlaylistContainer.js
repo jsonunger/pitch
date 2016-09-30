@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Playlist from '../components/Playlist';
-import { addSong, fetchPlaylist, unsetPlaylist } from '../action-reducers/playlist';
+import { fetchPlaylist, unsetPlaylist } from '../action-reducers/playlist';
 
 function mapStateToProps (state) {
   return {

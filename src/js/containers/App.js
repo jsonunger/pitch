@@ -11,6 +11,11 @@ import { fetchSongs } from '../action-reducers/songs';
 import '../../scss/app';
 
 class App extends Component {
+  static propTypes = {
+    children: PropTypes.element.isRequired,
+    init: PropTypes.func
+  }
+
   constructor(props) {
     super(props);
   }
@@ -37,11 +42,6 @@ class App extends Component {
     );
   }
 }
-
-App.propTypes = {
-  children: PropTypes.element.isRequired,
-  init: PropTypes.func
-};
 
 function mapDispatchToProps (dispatch) {
   return {

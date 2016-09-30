@@ -11,7 +11,7 @@ const ArtistAlbums = ({ artist }) => {
 };
 
 ArtistAlbums.propTypes = {
-  artist: PropTypes.object
+  artist: PropTypes.object.isRequired
 };
 
 export default ArtistAlbums;

@@ -1,6 +1,6 @@
 import { get, post, del } from '../utils/api';
 import { requestFailed } from './error';
-import { setCurrentList } from './currentList';
+import { clearCurrentList } from './currentList';
 import { setCurrentSong } from './currentSong';
 import { pauseMusic } from './isPlaying';
 
@@ -43,13 +43,14 @@ export const createPlaylist = playlist => dispatch => {
 };
 
 export const deletePlaylist = playlistId => (dispatch, getState) => {
-  const changingCurrentList = getState().currentList == getState().playlist.songs;
+  const { currentList } = getState();
+  const changingCurrentList = currentList.listType === 'playlist' && currentList.id === playlistId;
   return del(`/api/playlists/${playlistId}`)
     .then(() => dispatch(removePlaylist(playlistId)))
     .then(() => {
       if (changingCurrentList) {
         dispatch(pauseMusic());
-        dispatch(setCurrentList());
+        dispatch(clearCurrentList());
         return dispatch(setCurrentSong());
       } else {
         return;

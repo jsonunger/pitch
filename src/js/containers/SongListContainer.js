@@ -7,14 +7,15 @@ function mapStateToProps (state) {
   return {
     currentList: state.currentList,
     currentSong: state.currentSong,
-    playlist: state.playlist
+    playlist: state.playlist,
+    album: state.album
   };
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    playSong(song, list) {
-      return dispatch(start(song, list));
+    playSong(song, list, listType) {
+      return dispatch(start(song, list, listType));
     },
     removeSong (playlistId, songId) {
       return dispatch(removeSong(playlistId, songId));

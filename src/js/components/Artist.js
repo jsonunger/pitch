@@ -2,6 +2,14 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
 class Artist extends Component {
+  static propTypes = {
+    params: PropTypes.object.isRequired,
+    children: PropTypes.element.isRequired,
+    fetchArtist: PropTypes.func.isRequired,
+    unset: PropTypes.func.isRequired,
+    artist: PropTypes.object.isRequired
+  }
+
   constructor(props) {
     super(props);
   }
@@ -34,13 +42,5 @@ class Artist extends Component {
     );
   }
 }
-
-Artist.propTypes = {
-  params: PropTypes.object.isRequired,
-  children: PropTypes.element.isRequired,
-  fetchArtist: PropTypes.func.isRequired,
-  unset: PropTypes.func.isRequired,
-  artist: PropTypes.object
-};
 
 export default Artist;

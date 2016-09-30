@@ -24,7 +24,7 @@ const Sidebar = ({ routes }) => {
 };
 
 Sidebar.propTypes = {
-  routes: PropTypes.arrayOf(PropTypes.object)
+  routes: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 export default Sidebar;

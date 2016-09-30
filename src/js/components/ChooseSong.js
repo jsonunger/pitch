@@ -1,6 +1,16 @@
 import React, { Component, PropTypes } from 'react';
+import { sortByName } from '../utils/convert';
 
 class ChooseSong extends Component {
+  static propTypes = {
+    addSong: PropTypes.func.isRequired,
+    playlist: PropTypes.object.isRequired,
+    selectedSong: PropTypes.string,
+    setSelectedSong: PropTypes.func.isRequired,
+    songs: PropTypes.arrayOf(PropTypes.object).isRequired,
+    songExists: PropTypes.bool
+  }
+
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
@@ -20,6 +30,7 @@ class ChooseSong extends Component {
 
   render() {
     const { selectedSong, songs, songExists, setSelectedSong } = this.props;
+    sortByName(songs);
     return (
       <div className="well">
         <form className="form-horizontal" name="songSelect" onSubmit={ this.submit }>
@@ -30,7 +41,7 @@ class ChooseSong extends Component {
               <div className="col-xs-10">
                 <select className="form-control" name="song" required value={ selectedSong } onChange={ e => setSelectedSong(e.target.value) }>
                   <option></option>
-                  { songs.map(song => <option value={song.id} key={song.id}>{song.name}</option>) }
+                  { songs.map(song => <option value={song.id} key={song.id}>{song.name} - {song.artists.map(a => a.name).join(', ')}</option>) }
                 </select>
               </div>
             </div>
@@ -45,14 +56,5 @@ class ChooseSong extends Component {
     );
   }
 }
-
-ChooseSong.propTypes = {
-  addSong: PropTypes.func,
-  playlist: PropTypes.object,
-  selectedSong: PropTypes.string,
-  setSelectedSong: PropTypes.func,
-  songs: PropTypes.arrayOf(PropTypes.object),
-  songExists: PropTypes.bool
-};
 
 export default ChooseSong;

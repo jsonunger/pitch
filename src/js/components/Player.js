@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { dispatch } from '../store';
 import { next } from '../action-reducers/playerActions';
 import { setProgress } from '../action-reducers/progress';
@@ -14,6 +14,18 @@ audio.addEventListener('timeupdate', function () {
 });
 
 export default class Player extends Component {
+  static propTypes = {
+    scrollWidth: PropTypes.number,
+    currentSong: PropTypes.object,
+    setScrollWidth: PropTypes.func.isRequired,
+    progress: PropTypes.number,
+    previous: PropTypes.func.isRequired,
+    next: PropTypes.func.isRequired,
+    toggle: PropTypes.func.isRequired,
+    isPlaying: PropTypes.bool.isRequired,
+    currentList: PropTypes.object
+  }
+
   constructor(props) {
     super(props);
     this.handleResize = this.handleResize.bind(this);
@@ -64,13 +76,13 @@ export default class Player extends Component {
     return (
       <div>
         <div className="pull-left">
-          <button onClick={ previous } className="btn btn-default" disabled={ currentList.length <= 1 }>
+          <button onClick={ previous } className="btn btn-default" disabled={ currentList.songs.length <= 1 }>
             <span className="glyphicon glyphicon-step-backward"></span>
           </button>{' '}
           <button onClick={ toggle } className="btn btn-default">
             <span className={`glyphicon glyphicon-${ isPlaying ? 'pause' : 'play' }`}></span>
           </button>{' '}
-          <button onClick={ next } className="btn btn-default" disabled={ currentList.length <= 1 }>
+          <button onClick={ next } className="btn btn-default" disabled={ currentList.songs.length <= 1 }>
             <span className="glyphicon glyphicon-step-forward"></span>
           </button>
         </div>

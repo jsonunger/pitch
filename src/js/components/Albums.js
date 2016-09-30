@@ -11,7 +11,7 @@ const Albums = ({ albums }) => {
 };
 
 Albums.propTypes = {
-  albums: PropTypes.arrayOf(PropTypes.object)
+  albums: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 export default Albums;

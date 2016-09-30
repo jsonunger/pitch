@@ -7,3 +7,9 @@ export const convertSong = song => {
   song.audioUrl = `/api/songs/${song.id}/audio`;
   return song;
 };
+
+export const sortByName = array => array.sort((a, b) => {
+  if (a.sortName < b.sortName) return -1;
+  else if (a.sortName > b.sortName) return 1;
+  else return 0;
+});

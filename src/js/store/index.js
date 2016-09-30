@@ -4,6 +4,7 @@ import rootReducer from '../action-reducers';
 import loggerMiddleware from './logger';
 
 let middleware = [thunkMiddleware];
+
 if (process.env.NODE_ENV !== 'production') {
   middleware.push(loggerMiddleware);
 }

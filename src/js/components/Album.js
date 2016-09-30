@@ -3,6 +3,13 @@ import SongList from '../containers/SongListContainer';
 import '../../scss/album';
 
 class Album extends Component {
+  static propTypes = {
+    params: PropTypes.object.isRequired,
+    fetchAlbum: PropTypes.func.isRequired,
+    unset: PropTypes.func.isRequired,
+    album: PropTypes.object.isRequired
+  }
+
   constructor(props) {
     super(props);
   }
@@ -23,6 +30,7 @@ class Album extends Component {
 
   render() {
     const { album } = this.props;
+    album.songs.sort((a, b) => a.trackNum - b.trackNum);
     return (
       <div className="album">
         <div>
@@ -35,12 +43,5 @@ class Album extends Component {
     );
   }
 }
-
-Album.propTypes = {
-  params: PropTypes.object,
-  fetchAlbum: PropTypes.func.isRequired,
-  unset: PropTypes.func,
-  album: PropTypes.object
-};
 
 export default Album;

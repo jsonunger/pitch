@@ -8,8 +8,10 @@ if (process.env.NODE_ENV === 'production') {
   env = devConfig;
 }
 
-const { DATABASE_URI } = env;
+const { DATABASE_URI, FACEBOOK } = env;
+
+FACEBOOK.profileFields = ['id', 'displayName', 'photos', 'emails'];
 
 export default env;
 
-export { DATABASE_URI };
+export { DATABASE_URI, FACEBOOK };

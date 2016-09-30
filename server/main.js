@@ -1,23 +1,31 @@
 import chalk from 'chalk';
-import startDb from './db';
+import db from './db';
 import { createServer } from 'http';
-import app from './app';
+import buildApp from './app';
 const server = createServer();
 
-const createApplication = () => server.on('request', app);
-
-const startServer = () => {
-    const PORT = process.env.PORT || 1337;
-
-    server.listen(PORT, function() {
-      console.log(chalk.blue(`Server started on port ${chalk.magenta(PORT)}`));
-    });
+const createApplication = () => {
+  const app = buildApp(db);
+  server.on('request', app);
+  return null;
 };
 
-startDb
+const startServer = () => {
+  const PORT = process.env.PORT || 1337;
+
+  server.listen(PORT, function() {
+    console.log(chalk.blue(`Server started on port ${chalk.magenta(PORT)}`));
+  });
+};
+
+db.sync()
+  .then(function() {
+    console.log(chalk.green('Sequelize models synced to PostgreSQL'));
+    return null;
+  })
   .then(createApplication)
   .then(startServer)
-  .catch(function (err) {
-      console.error(chalk.red(err.stack));
-      process.kill(1);
+  .catch(function(err) {
+    console.error(chalk.red(err.stack));
+    process.kill(1);
   });

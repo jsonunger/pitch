@@ -36,7 +36,7 @@ export default function(app, db) {
 
   // When we get a cookie, we use the id to set req.user
   passport.deserializeUser((id, done) => {
-    User.findById(id)
+    User.scope('populated').findById(id)
       .then(user => done(null, user))
       .catch(done);
   });

@@ -9,12 +9,13 @@ const definitions = {
   fullName: {
     type: Sequelize.STRING
   },
-  nickName: {
-    type: Sequelize.STRING
-  },
   facebookId: {
     type: Sequelize.STRING,
     unique: true
+  },
+  isAdmin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 };
 
@@ -22,12 +23,23 @@ const methods = {
   instanceMethods: {
     getPlaylists() {
       return db.model('playlist').findAll({ where: { userId: this.id } });
+    },
+    addPlaylist(body) {
+      return db.model('playlist').create(body)
+        .then(playlist => playlist.setUser(this.id));
     }
   },
   classMethods: {
     findByFacebook(facebookId) {
       return this.findOne({ where: { facebookId } });
     }
+  },
+  scopes: {
+    populated: () => ({
+      include: [{
+        model: db.model('playlist')
+      }]
+    })
   }
 };
 

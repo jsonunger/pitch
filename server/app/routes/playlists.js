@@ -1,17 +1,18 @@
 /* eslint-disable new-cap */
 import { Router } from 'express';
 import { Playlist } from '../../db/models';
+import { assertAdminOrSelf, assertSelf } from './middleware/auth';
 
 const router = Router();
 
 router.route('/')
-  .get((req, res, next) => {
-    Playlist.findAll({ where: req.query })
+  .get(assertAdminOrSelf, (req, res, next) => {
+    req.requestedUser.getPlaylists()
       .then(playlists => res.json(playlists))
       .catch(next);
   })
-  .post((req, res, next) => {
-    Playlist.create(req.body)
+  .post(assertSelf, (req, res, next) => {
+    req.requestedUser.addPlaylist(req.body)
       .then(playlist => res.status(201).json(playlist))
       .catch(next);
   });
@@ -32,21 +33,21 @@ router.param('playlistId', function(req, res, next, id) {
 });
 
 router.route('/:playlistId')
-  .get((req, res) => res.json(req.playlist))
-  .put((req, res, next) => {
+  .get(assertAdminOrSelf, (req, res) => res.json(req.playlist))
+  .put(assertAdminOrSelf, (req, res, next) => {
     req.playlist.update(req.body)
       .then(playlist => res.status(200).json(playlist))
       .catch(next);
   })
-  .delete((req, res, next) => {
+  .delete(assertAdminOrSelf, (req, res, next) => {
     req.playlist.destroy()
       .then(() => res.sendStatus(204))
       .catch(next);
   });
 
 router.route('/:playlistId/songs')
-  .get((req, res) => res.json(req.playlist.songs))
-  .post((req, res, next) => {
+  .get(assertAdminOrSelf, (req, res) => res.json(req.playlist.songs))
+  .post(assertAdminOrSelf, (req, res, next) => {
     const id = req.body.id || req.body.song.id;
     req.playlist.addAndReturnSong(id)
       .then(song => res.status(201).json(song))
@@ -59,20 +60,10 @@ router.route('/:playlistId/songs')
       });
   });
 
-router.route('/:playlistId/songs/:songId')
-  .get((req, res, next) => {
-    const song = req.playlist.songs.find(s => s.id === Number(req.params.songId));
-    if (!song) {
-      const err = new Error('Playlist song not found');
-      err.status(404);
-      return next(err);
-    }
-    res.json(song);
-  })
-  .delete((req, res, next) => {
-    req.playlist.removeSong(req.params.songId)
-      .then(() => res.sendStatus(204))
-      .catch(next);
-  });
+router.delete('/:playlistId/songs/:songId', assertAdminOrSelf, (req, res, next) => {
+  req.playlist.removeSong(req.params.songId)
+    .then(() => res.sendStatus(204))
+    .catch(next);
+});
 
 export { router as default };

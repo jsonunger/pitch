@@ -1,17 +1,14 @@
-import devConfig from './development';
-import prodConfig from './production';
-
 let env;
 if (process.env.NODE_ENV === 'production') {
-  env = prodConfig;
+  env = require('./production').default;
 } else {
-  env = devConfig;
+  env = require('./development').default;
 }
 
-const { DATABASE_URI, FACEBOOK } = env;
+const { DATABASE_URI, FACEBOOK, GOOGLE } = env;
 
 FACEBOOK.profileFields = ['id', 'displayName', 'photos', 'emails'];
 
 export default env;
 
-export { DATABASE_URI, FACEBOOK };
+export { DATABASE_URI, FACEBOOK, GOOGLE };

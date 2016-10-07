@@ -12,7 +12,7 @@ router.route('/')
       .catch(next);
   })
   .post(assertSelf, (req, res, next) => {
-    req.requestedUser.addPlaylist(req.body)
+    req.requestedUser.createPlaylist(req.body)
       .then(playlist => res.status(201).json(playlist))
       .catch(next);
   });

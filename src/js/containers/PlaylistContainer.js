@@ -4,14 +4,15 @@ import { fetchPlaylist, unsetPlaylist } from '../action-reducers/playlist';
 
 function mapStateToProps (state) {
   return {
-    playlist: state.playlist
+    playlist: state.playlist,
+    user: state.auth.user
   };
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    fetchPlaylist (playlistId) {
-      return dispatch(fetchPlaylist(playlistId));
+    fetchPlaylist (userId, playlistId) {
+      return dispatch(fetchPlaylist(userId, playlistId));
     },
     unset () {
       return dispatch(unsetPlaylist());

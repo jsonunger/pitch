@@ -13,7 +13,8 @@ import '../../scss/app';
 class App extends Component {
   static propTypes = {
     children: PropTypes.element.isRequired,
-    init: PropTypes.func
+    dispatch: PropTypes.func,
+    user: PropTypes.object
   }
 
   constructor(props) {
@@ -21,10 +22,21 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.props.init();
+    const { dispatch, user } = this.props;
+    let fetches = [
+      dispatch(fetchAlbums()),
+      dispatch(fetchArtists()),
+      dispatch(fetchSongs())
+    ];
+    if (user) {
+      fetches.push(dispatch(fetchPlaylists(user.id)));
+    }
+    Bluebird.all(fetches);
   }
 
+
   render() {
+    const { children } = this.props;
     return (
       <div id="app">
         <div className="container-fluid">
@@ -32,7 +44,7 @@ class App extends Component {
             <Sidebar {...this.props} />
           </div>
           <div className="col-xs-10">
-            { this.props.children }
+            { children }
           </div>
           <footer>
             <Player />
@@ -43,17 +55,10 @@ class App extends Component {
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapStateToProps (state) {
   return {
-    init() {
-      return Bluebird.all([
-        dispatch(fetchPlaylists()),
-        dispatch(fetchAlbums()),
-        dispatch(fetchArtists()),
-        dispatch(fetchSongs())
-      ]);
-    }
+    user: state.auth.user
   };
 }
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

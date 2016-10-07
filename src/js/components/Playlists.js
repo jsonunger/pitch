@@ -2,14 +2,14 @@ import React, { PropTypes } from 'react';
 import { Link, browserHistory } from 'react-router';
 import '../../scss/playlist';
 
-const deletePlaylist = (delFunc, id, current) => {
-  delFunc(id)
+const deletePlaylist = (delFunc, userId, playlistId, current) => {
+  delFunc(userId, playlistId)
     .then(() => {
-      if (current.id === id) browserHistory.push('/albums');
+      if (current.id === playlistId) browserHistory.push('/albums');
     });
 };
 
-const Playlists = ({ playlists, del, playlist, routes }) => {
+const Playlists = ({ playlists, del, playlist, routes, user }) => {
   let playRoute = routes.some(route => route.name === 'playlist');
   return (
     <section id="playlist">
@@ -17,7 +17,7 @@ const Playlists = ({ playlists, del, playlist, routes }) => {
       {playlists.map(play =>
         <p key={play.id} className={`playlist menu-item${playRoute && play.name === playlist.name ? ' active' : ''}`}>
           <Link to={`/playlists/${play.id}`}>{play.name}</Link>
-          <button className="btn btn-default btn-xs" onClick={ () => deletePlaylist(del, play.id, playlist) }>
+          <button className="btn btn-default btn-xs" onClick={ () => deletePlaylist(del, user.id, play.id, playlist) }>
             <span className="glyphicon glyphicon-remove"></span>
           </button>
         </p>
@@ -33,7 +33,8 @@ Playlists.propTypes = {
   playlists: PropTypes.arrayOf(PropTypes.object).isRequired,
   del: PropTypes.func.isRequired,
   playlist: PropTypes.object,
-  routes: PropTypes.arrayOf(PropTypes.object).isRequired
+  routes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  user: PropTypes.object
 };
 
 export default Playlists;

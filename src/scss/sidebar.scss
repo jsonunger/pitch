@@ -7,6 +7,7 @@
   height: calc(100vh - 56px);
   width: inherit;
   border-right: 2px solid #555;
+  overflow-y: scroll;
 
   .logo {
     width: 100%;
@@ -32,5 +33,15 @@
     &:hover {
       border-left: 3px solid #00bc8c;
     }
+  }
+
+  .btn-oauth {
+    padding: 8px 12px 8px 44px !important;
+    margin: auto;
+    width: 94%;
+  }
+
+  .btn-section {
+    margin-bottom: 10px;
   }
 }

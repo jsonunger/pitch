@@ -27,8 +27,8 @@ export const removePlaylist = playlistId => ({
 });
 
 /** ASYNC ACTION CREATORS */
-export const fetchPlaylists = () => dispatch => {
-  return get('/api/playlists')
+export const fetchPlaylists = userId => dispatch => {
+  return get(`/api/users/${userId}/playlists`)
   .then(returnedPlaylists => {
     returnedPlaylists.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     return dispatch(receivePlaylists(returnedPlaylists));
@@ -36,16 +36,16 @@ export const fetchPlaylists = () => dispatch => {
   .catch(err => dispatch(requestFailed(err)));
 };
 
-export const createPlaylist = playlist => dispatch => {
-  return post('/api/playlists', playlist)
+export const createPlaylist = (userId, playlist) => dispatch => {
+  return post(`/api/users/${userId}/playlists`, playlist)
     .then(returnedPlaylist => dispatch(addPlaylist(returnedPlaylist)))
     .catch(err => dispatch(requestFailed(err)));
 };
 
-export const deletePlaylist = playlistId => (dispatch, getState) => {
+export const deletePlaylist = (userId, playlistId) => (dispatch, getState) => {
   const { currentList } = getState();
   const changingCurrentList = currentList.listType === 'playlist' && currentList.id === playlistId;
-  return del(`/api/playlists/${playlistId}`)
+  return del(`/api/users/${userId}/playlists/${playlistId}`)
     .then(() => dispatch(removePlaylist(playlistId)))
     .then(() => {
       if (changingCurrentList) {
@@ -60,7 +60,7 @@ export const deletePlaylist = playlistId => (dispatch, getState) => {
 };
 
 /** REDUCER */
-export default function playlists (state = [], action) {
+export default function reducer (state = [], action) {
   switch (action.type) {
     case RECEIVE_PLAYLISTS:
       return action.playlists;

@@ -1,39 +1,39 @@
 import { combineReducers } from 'redux';
+import { routerReducer as routing } from 'react-router-redux';
 
-import error from './error';
-import playlists from './playlists';
-import playlist from './playlist';
-import albums from './albums';
-import artists from './artists';
-import artist from './artist';
 import album from './album';
-import songs from './songs';
-import filter from './filter';
-import selectedSong from './selectedSong';
-import newPlaylistName from './newPlaylistName';
-import isPlaying from './isPlaying';
-import currentSong from './currentSong';
+import albums from './albums';
+import artist from './artist';
+import artists from './artists';
+import auth from './auth';
 import currentList from './currentList';
+import currentSong from './currentSong';
+import error from './error';
+import filter from './filter';
+import isPlaying from './isPlaying';
+import playlist from './playlist';
+import playlists from './playlists';
 import progress from './progress';
 import scrollWidth from './scrollWidth';
+import songs from './songs';
 
 const rootReducer = combineReducers({
-  error,
-  playlists,
-  playlist,
-  albums,
-  artists,
-  artist,
   album,
-  songs,
-  filter,
-  selectedSong,
-  newPlaylistName,
-  isPlaying,
-  currentSong,
+  albums,
+  artist,
+  artists,
+  auth,
   currentList,
+  currentSong,
+  error,
+  filter,
+  isPlaying,
+  playlist,
+  playlists,
   progress,
-  scrollWidth
+  routing,
+  scrollWidth,
+  songs
 });
 
 export default rootReducer;

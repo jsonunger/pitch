@@ -18,7 +18,7 @@ export const fetchArtists = () => dispatch => {
 };
 
 /** REDUCER */
-export default function artists (state = [], action) {
+export default function reducer (state = [], action) {
   switch (action.type) {
     case RECEIVE_ARTISTS:
       return action.artists;

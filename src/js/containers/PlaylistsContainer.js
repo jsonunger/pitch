@@ -5,14 +5,15 @@ import { deletePlaylist } from '../action-reducers/playlists';
 function mapStateToProps (state) {
   return {
     playlists: state.playlists,
-    playlist: state.playlist
+    playlist: state.playlist,
+    user: state.auth.user
   };
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    del (id) {
-      return dispatch(deletePlaylist(id));
+    del (userId, playlistId) {
+      return dispatch(deletePlaylist(userId, playlistId));
     }
   };
 }

@@ -2,30 +2,21 @@ import { connect } from 'react-redux';
 import PlaylistForm from '../components/PlaylistForm';
 import { createPlaylist } from '../action-reducers/playlists';
 import { requestFailed } from '../action-reducers/error';
-import { setNewPlaylistName } from '../action-reducers/newPlaylistName';
-
-function isNameTaken(name, playlists) {
-  return playlists.some(play => play.name === name);
-}
 
 function mapStateToProps (state) {
   return {
     playlists: state.playlists,
-    newPlaylistName: state.newPlaylistName,
-    nameTaken: isNameTaken(state.newPlaylistName, state.playlists)
+    user: state.auth.user
   };
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    create (name) {
-      return dispatch(createPlaylist({ name }));
+    create (name, userId) {
+      return dispatch(createPlaylist(userId, { name }));
     },
     err (err) {
       return dispatch(requestFailed(err));
-    },
-    setName (name) {
-      return dispatch(setNewPlaylistName(name));
     }
   };
 }

@@ -7,7 +7,8 @@ class Playlist extends Component {
     fetchPlaylist: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     unset: PropTypes.func.isRequired,
-    playlist: PropTypes.object.isRequired
+    playlist: PropTypes.object.isRequired,
+    user: PropTypes.object
   }
 
   constructor(props) {
@@ -15,13 +16,13 @@ class Playlist extends Component {
   }
 
   componentDidMount() {
-    const { fetchPlaylist, params } = this.props;
-    fetchPlaylist(params.playlistId);
+    const { fetchPlaylist, params, user } = this.props;
+    fetchPlaylist(user.id, params.playlistId);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { fetchPlaylist, params } = nextProps;
-    fetchPlaylist(params.playlistId);
+    const { fetchPlaylist, params, user } = nextProps;
+    fetchPlaylist(user.id, params.playlistId);
   }
 
   componentWillUnmount() {

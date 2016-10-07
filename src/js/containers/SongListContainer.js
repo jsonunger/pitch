@@ -8,7 +8,8 @@ function mapStateToProps (state) {
     currentList: state.currentList,
     currentSong: state.currentSong,
     playlist: state.playlist,
-    album: state.album
+    album: state.album,
+    user: state.auth.user
   };
 }
 
@@ -17,8 +18,8 @@ function mapDispatchToProps (dispatch) {
     playSong(song, list, listType) {
       return dispatch(start(song, list, listType));
     },
-    removeSong (playlistId, songId) {
-      return dispatch(removeSong(playlistId, songId));
+    removeSong (playlistId, songId, userId) {
+      return dispatch(removeSong(userId, playlistId, songId));
     }
   };
 }

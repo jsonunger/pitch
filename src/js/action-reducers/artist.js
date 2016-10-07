@@ -32,7 +32,7 @@ export const fetchArtist = artistId => (dispatch, getState) => {
 };
 
 /** REDUCER */
-export default function artist (state = { albums: [], songs: [] }, action) {
+export default function reducer (state = { albums: [], songs: [] }, action) {
   switch (action.type) {
     case RECEIVE_ARTIST:
       return action.artist;

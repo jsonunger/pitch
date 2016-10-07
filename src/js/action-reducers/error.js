@@ -17,7 +17,7 @@ export const requestFailed = (err) => (dispatch) => {
 };
 
 /** REDUCER */
-export default function error (state = {}, action) {
+export default function reducer (state = {}, action) {
   switch (action.type) {
     case REQUEST_FAILED:
       return action.error;

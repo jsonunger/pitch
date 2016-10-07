@@ -96,9 +96,12 @@ fs.statAsync(xmlFile)
       xmlStream.pipe(itunes.createTrackStream())
         .on('data', data => {
           status[TRACKS].total.inc(1);
-          if (status[TRACKS].seeding.val >= program[TRACKS] || !isValidData(data)) {
+          if (status[TRACKS].seeding.val >= program[TRACKS]) {
             status[TRACKS].skipped.inc(1);
-            log `SKIPPED: Song: ${data.Name}, Artist: ${data.Artist}, Album: ${data.Album}`;
+            return;
+          } else if (!isValidData(data)) {
+            status[TRACKS].skipped.inc(1);
+            log `SKIPPED FOR INVALID DATA: Song: ${data.Name}, Artist: ${data.Artist}, Album: ${data.Album}`;
             return;
           }
           status[TRACKS].seeding.inc(1);

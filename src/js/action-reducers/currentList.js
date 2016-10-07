@@ -14,7 +14,7 @@ export const clearCurrentList = () => ({
 
 const initialState = { songs: [] };
 
-export default function currentList(state = initialState, action) {
+export default function reducer (state = initialState, action) {
   switch (action.type) {
     case SET_CURRENT_LIST:
       return {

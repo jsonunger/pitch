@@ -6,7 +6,7 @@ export const togglePlaying = () => ({ type: TOGGLE_PLAYING });
 export const playMusic = () => ({ type: PLAY_MUSIC });
 export const pauseMusic = () => ({ type: PAUSE_MUSIC });
 
-export default function isPlaying (state = false, action) {
+export default function reducer (state = false, action) {
   switch (action.type) {
     case TOGGLE_PLAYING:
       return !state;

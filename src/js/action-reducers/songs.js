@@ -18,7 +18,7 @@ export const fetchSongs = () => dispatch => {
 };
 
 /** REDUCER */
-export default function songs (state = [], action) {
+export default function reducer (state = [], action) {
   switch (action.type) {
     case RECEIVE_SONGS:
       return action.songs;

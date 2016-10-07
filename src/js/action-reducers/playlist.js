@@ -32,10 +32,10 @@ export const unsetPlaylist = () => ({
 });
 
 /** ASYNC ACTION CREATORS */
-export const fetchPlaylist = playlistId => (dispatch, getState) => {
+export const fetchPlaylist = (userId, playlistId) => (dispatch, getState) => {
   if (getState().playlist.id === +playlistId) return;
 
-  return get(`/api/playlists/${playlistId}`)
+  return get(`/api/users/${userId}/playlists/${playlistId}`)
     .then(returnedPlaylist => {
       returnedPlaylist.songs = returnedPlaylist.songs.map(convertSong);
       return dispatch(receivePlaylist(returnedPlaylist));
@@ -43,10 +43,10 @@ export const fetchPlaylist = playlistId => (dispatch, getState) => {
     .catch(err => dispatch(requestFailed(err)));
 };
 
-export const addSong = (playlistId, id) => (dispatch, getState) => {
+export const addSong = (userId, playlistId, id) => (dispatch, getState) => {
   const { currentList } = getState();
   const changingCurrentList = currentList.listType === 'playlist' && currentList.id === playlistId;
-  return post(`/api/playlists/${playlistId}/songs`, { id })
+  return post(`/api/users/${userId}/playlists/${playlistId}/songs`, { id })
     .then(convertSong)
     .then(song => dispatch(addSongToPlaylist(song)))
     .then(() => {
@@ -60,10 +60,10 @@ export const addSong = (playlistId, id) => (dispatch, getState) => {
     .catch(err => dispatch(requestFailed(err)));
 };
 
-export const removeSong = (playlistId, id) => (dispatch, getState) => {
+export const removeSong = (userId, playlistId, id) => (dispatch, getState) => {
   const { currentList } = getState();
   const changingCurrentList = currentList.listType === 'playlist' && currentList.id === playlistId;
-  return del(`/api/playlists/${playlistId}/songs/${id}`)
+  return del(`/api/users/${userId}/playlists/${playlistId}/songs/${id}`)
     .then(() => dispatch(removeSongFromPlaylist(id)))
     .then(() => {
       if (changingCurrentList) {
@@ -85,7 +85,7 @@ export const removeSong = (playlistId, id) => (dispatch, getState) => {
 };
 
 /** REDUCER */
-export default function playlist (state = { songs: [] }, action) {
+export default function reducer (state = { songs: [] }, action) {
   switch (action.type) {
     case RECEIVE_PLAYLIST:
       return action.playlist;

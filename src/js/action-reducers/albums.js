@@ -19,7 +19,7 @@ export const fetchAlbums = () => dispatch => {
 };
 
 /** REDUCER */
-export default function albums (state = [], action) {
+export default function reducer (state = [], action) {
   switch (action.type) {
     case RECEIVE_ALBUMS:
       return action.albums;

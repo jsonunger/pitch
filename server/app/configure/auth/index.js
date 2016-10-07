@@ -44,7 +44,7 @@ export default function(app, db) {
   // Used by client to determine if a user is already logged in
   app.get('/session', (req, res, next) => {
     if (req.user) {
-      res.send({ user: req.user.sanitize() });
+      res.send({ user: req.user });
     } else {
       const err = new Error('No authenticated user');
       err.status = 401;

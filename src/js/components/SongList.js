@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import '../../scss/songList';
 
-const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSong, currentList, album }) => {
+const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSong, currentList, album, user }) => {
   const current = inPlaylist ? playlist : album;
   const listType = inPlaylist ? 'playlist' : 'album';
   let isActiveList = currentList.id === current.id;
@@ -26,7 +26,7 @@ const SongList = ({ songs, removeSong, playlist, inPlaylist, playSong, currentSo
             </td>
             <td>{ song.genre }</td>
             {inPlaylist && <td>
-              <button className="btn btn-default btn-xs" onClick={ () => removeSong(playlist.id, song.id) }>
+              <button className="btn btn-default btn-xs" onClick={ () => removeSong(playlist.id, song.id, user.id) }>
                 <span className="glyphicon glyphicon-remove"></span>
               </button>
             </td>}
@@ -45,7 +45,8 @@ SongList.propTypes = {
   playSong: PropTypes.func.isRequired,
   currentSong: PropTypes.object.isRequired,
   currentList: PropTypes.object.isRequired,
-  album: PropTypes.object
+  album: PropTypes.object,
+  user: PropTypes.object
 };
 
 export default SongList;

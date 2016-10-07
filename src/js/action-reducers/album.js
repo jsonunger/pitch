@@ -30,7 +30,7 @@ export const fetchAlbum = albumId => (dispatch, getState) => {
 };
 
 /** REDUCER */
-export default function album (state = { name: '', imageUrl: '', songs: [] }, action) {
+export default function reducer (state = { name: '', imageUrl: '', songs: [] }, action) {
   switch (action.type) {
     case RECEIVE_ALBUM:
       return action.album;

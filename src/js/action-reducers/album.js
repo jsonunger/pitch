@@ -29,13 +29,15 @@ export const fetchAlbum = albumId => (dispatch, getState) => {
     .catch(err => dispatch(requestFailed(err)));
 };
 
+const initialState = { name: '', imageUrl: '', songs: [] };
+
 /** REDUCER */
-export default function reducer (state = { name: '', imageUrl: '', songs: [] }, action) {
+export default function reducer (state = initialState, action) {
   switch (action.type) {
     case RECEIVE_ALBUM:
       return action.album;
     case UNSET_ALBUM:
-      return { name: '', imageUrl: '', songs: [] };
+      return initialState;
     default:
       return state;
   }

@@ -21,14 +21,14 @@ const renderPlaylistsOrLogin = (user, dispatch, routes) => {
   if (user) {
     return (
       <div>
-        <a onClick={handleLogout} className="btn btn-block">
+        <a onClick={handleLogout} className="btn btn-block btn-section btn-default ellipsis">
           Sign out
         </a>
-        <Playlists routes={routes} />
+        <Playlists />
       </div>
     );
   } else {
-    const providers = ['Facebook'];
+    const providers = ['Facebook', 'Google'];
     return (
       <div>
         {providers.map((provider, i) => <AuthButton key={i} provider={provider} />)}
@@ -54,17 +54,23 @@ AuthButton.propTypes = {
 };
 
 const Sidebar = ({ routes, user, dispatch }) => {
-  let routeName;
-  routes.forEach(route => {
-    if (route.name) {
-      routeName = route.name;
-    }
-  });
   return (
     <div id="sidebar">
       <Link to="/"><img src="/pitch.svg" className="logo" /></Link>
-      <h4 className={ `menu-item${ routeName === 'albums' ? ' active' : '' }` }><NavLink to="/albums">ALBUMS</NavLink></h4>
-      <h4 className={ `menu-item${ routeName === 'artists' ? ' active' : '' }` }><NavLink to="/artists">ARTISTS</NavLink></h4>
+      <NavLink to="/albums">
+        <section>
+        <h4 className="menu-item">
+          ALBUMS
+        </h4>
+        </section>
+      </NavLink>
+      <NavLink to="/artists">
+        <section>
+        <h4 className="menu-item">
+          ARTISTS
+        </h4>
+        </section>
+      </NavLink>
       <hr />
       {renderPlaylistsOrLogin(user, dispatch, routes)}
     </div>

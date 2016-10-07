@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import Playlists from '../components/Playlists';
-import { deletePlaylist } from '../action-reducers/playlists';
 
 function mapStateToProps (state) {
   return {
@@ -10,12 +9,4 @@ function mapStateToProps (state) {
   };
 }
 
-function mapDispatchToProps (dispatch) {
-  return {
-    del (userId, playlistId) {
-      return dispatch(deletePlaylist(userId, playlistId));
-    }
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Playlists);
+export default connect(mapStateToProps)(Playlists);

@@ -9,7 +9,6 @@ import auth from './auth';
 import currentList from './currentList';
 import currentSong from './currentSong';
 import error from './error';
-import filter from './filter';
 import isPlaying from './isPlaying';
 import playlist from './playlist';
 import playlists from './playlists';
@@ -26,7 +25,6 @@ const rootReducer = combineReducers({
   currentList,
   currentSong,
   error,
-  filter,
   isPlaying,
   playlist,
   playlists,

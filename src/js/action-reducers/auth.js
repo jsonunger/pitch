@@ -1,4 +1,7 @@
 import { get, post } from '../utils/api';
+import { clearCurrentList } from './currentList';
+import { setCurrentSong } from './currentSong';
+import { pauseMusic } from './isPlaying';
 
 const LOAD = 'LOAD';
 const LOAD_SUCCESS = 'LOAD_SUCCESS';
@@ -51,13 +54,27 @@ export const signup = credentials => ({
   promise: trySignup(credentials)
 });
 
-export const logout = () => ({
-  types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAILURE],
-  promise: tryLogout()
-});
+export const logout = () => (dispatch, getState) => {
+  dispatch({ type: LOGOUT });
+  return tryLogout()
+    .then(() => {
+      const { currentList } = getState();
+      if (currentList.listType === 'playlist') {
+        dispatch(pauseMusic());
+        dispatch(clearCurrentList());
+        return dispatch(setCurrentSong());
+      } else {
+        return;
+      }
+    })
+    .then(
+      () => dispatch({ type: LOGOUT_SUCCESS }),
+      error => dispatch({ error, type: LOGOUT_FAILURE })
+    )
+    .catch(err => dispatch({ error: err.message || 'An error occured', type: LOGOUT_FAILURE }));
+};
 
 export default function reducer (state = { loaded: false }, action) {
-  console.log(action);
   switch (action.type) {
     case LOAD:
       return {

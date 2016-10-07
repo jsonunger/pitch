@@ -1,7 +1,10 @@
 .playlist {
+  margin-right: 6%;
+
   button {
     display: none;
   }
+
   &:hover {
     button {
       display: inline-block;

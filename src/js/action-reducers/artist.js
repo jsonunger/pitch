@@ -31,13 +31,15 @@ export const fetchArtist = artistId => (dispatch, getState) => {
     .catch(err => dispatch(requestFailed(err)));
 };
 
+const initialState = { albums: [], songs: [] };
+
 /** REDUCER */
-export default function reducer (state = { albums: [], songs: [] }, action) {
+export default function reducer (state = initialState, action) {
   switch (action.type) {
     case RECEIVE_ARTIST:
       return action.artist;
     case UNSET_ARTIST:
-      return { albums: [], songs: [] };
+      return initialState;
     default:
       return state;
   }

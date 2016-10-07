@@ -18,30 +18,37 @@
     padding: 0 15px;
   }
 
-  .menu-item {
-    transition: border-left, 0.2s;
-
-    a {
+  a {
+    .menu-item {
+      transition: border-left, 0.2s;
       color: #c8c8c8;
+
+      &:hover {
+        border-left: 3px solid #00bc8c;
+        color: white;
+      }
     }
 
-    a:hover {
-      color: white;
-    }
+    &.active {
+      text-decoration: none;
 
-    &.active,
-    &:hover {
-      border-left: 3px solid #00bc8c;
+      .menu-item {
+        border-left: 3px solid #00bc8c;
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
   .btn-oauth {
     padding: 8px 12px 8px 44px !important;
-    margin: auto;
-    width: 94%;
   }
 
   .btn-section {
+    margin: auto;
+    width: 90%;
     margin-bottom: 10px;
   }
 }

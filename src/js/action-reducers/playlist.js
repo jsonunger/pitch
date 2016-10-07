@@ -84,8 +84,10 @@ export const removeSong = (userId, playlistId, id) => (dispatch, getState) => {
     .catch(err => dispatch(requestFailed(err)));
 };
 
+const initialState = { songs: [] };
+
 /** REDUCER */
-export default function reducer (state = { songs: [] }, action) {
+export default function reducer (state = initialState, action) {
   switch (action.type) {
     case RECEIVE_PLAYLIST:
       return action.playlist;
@@ -100,7 +102,7 @@ export default function reducer (state = { songs: [] }, action) {
         songs: state.songs.filter(song => song.id !== action.songId)
       };
     case UNSET_PLAYLIST:
-      return { songs: [] };
+      return initialState;
     default:
       return state;
   }

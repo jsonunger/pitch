@@ -7,7 +7,7 @@ const SequelizeStore = connect(session.Store);
 
 const ENABLED_AUTH_STRATEGIES = [
   'facebook',
-  // 'google',
+  'google',
   // 'local'
 ];
 

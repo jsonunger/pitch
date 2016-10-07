@@ -1,13 +1,13 @@
 import passport from 'passport';
-import Strategy from 'passport-facebook';
+import { OAuth2Strategy } from 'passport-google-oauth';
 
 module.exports = (app, db) => {
   const User = db.model('user');
 
-  const facebookConfig = app.getValue('env').FACEBOOK;
+  const googleConfig = app.getValue('env').GOOGLE;
 
   const strategyFn = (accessToken, refreshToken, profile, done) => {
-    User.findByProvider('facebook', profile.id)
+    User.findByProvider('google', profile.id)
       .then(user => {
         if (user) {
           return user;
@@ -18,26 +18,31 @@ module.exports = (app, db) => {
       .then(user => {
         if (user) {
           return user.update({
-            facebookId: profile.id
+            googleId: profile.id
           });
         } else {
           return User.create({
             fullName: profile.displayName,
             email: profile.emails[0].value,
-            facebookId: profile.id
+            googleId: profile.id
           });
         }
       })
       .then(userToLogin => done(null, userToLogin))
       .catch(err => {
-        console.error('Error creating user from Facebook authentication');
+        console.error('Error creating user from Google authentication');
         done(err);
       });
   };
 
-  passport.use(new Strategy(facebookConfig, strategyFn));
+  passport.use(new OAuth2Strategy(googleConfig, strategyFn));
 
-  app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
+  app.get('/auth/google', passport.authenticate('google', {
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ]
+  }));
 
-  app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/' }));
+  app.get('/auth/google/callback', passport.authenticate('google', { successRedirect: '/', failureRedirect: '/' }));
 };

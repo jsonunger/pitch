@@ -13,6 +13,10 @@ const definitions = {
     type: Sequelize.STRING,
     unique: true
   },
+  googleId: {
+    type: Sequelize.STRING,
+    unique: true
+  },
   isAdmin: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
@@ -30,8 +34,11 @@ const methods = {
     }
   },
   classMethods: {
-    findByFacebook(facebookId) {
-      return this.findOne({ where: { facebookId } });
+    findByProvider(provider, profileId) {
+      return this.findOne({ where: { [`${provider}Id`]: profileId } });
+    },
+    findByEmail(email) {
+      return this.findOne({ where: { email } });
     }
   },
   scopes: {

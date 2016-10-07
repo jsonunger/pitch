@@ -17,12 +17,12 @@ class Playlist extends Component {
 
   componentDidMount() {
     const { fetchPlaylist, params, user } = this.props;
-    fetchPlaylist(user.id, params.playlistId);
+    if (user) fetchPlaylist(user.id, params.playlistId);
   }
 
   componentWillReceiveProps(nextProps) {
     const { fetchPlaylist, params, user } = nextProps;
-    fetchPlaylist(user.id, params.playlistId);
+    if (user) fetchPlaylist(user.id, params.playlistId);
   }
 
   componentWillUnmount() {

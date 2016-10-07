@@ -1,3 +1,4 @@
+import { push } from 'react-router-redux';
 import { get, post } from '../utils/api';
 import { clearCurrentList } from './currentList';
 import { setCurrentSong } from './currentSong';
@@ -71,6 +72,12 @@ export const logout = () => (dispatch, getState) => {
       () => dispatch({ type: LOGOUT_SUCCESS }),
       error => dispatch({ error, type: LOGOUT_FAILURE })
     )
+    .then(() => {
+      const { playlist: { id }, routing: { locationBeforeTransitions: { pathname } } } = getState();
+      if (!id) return;
+      else if (pathname === `/playlists/${id}`) return dispatch(push('/albums'));
+      else return;
+    })
     .catch(err => dispatch({ error: err.message || 'An error occured', type: LOGOUT_FAILURE }));
 };
 

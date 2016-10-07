@@ -1,27 +1,16 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { push } from 'react-router-redux';
 import NavLink from './NavLink';
 import Playlists from '../containers/PlaylistsContainer';
 import { logout } from '../action-reducers/auth';
 
 import '../../scss/sidebar';
 
-const renderPlaylistsOrLogin = (user, dispatch, routes) => {
-
-  function handleLogout () {
-    dispatch(logout())
-      .then(() => {
-        if (routes.some(r => r.name === 'playlist')) {
-          dispatch(push('/albums'));
-        }
-      });
-  }
-
+const renderPlaylistsOrLogin = (user, dispatch) => {
   if (user) {
     return (
       <div>
-        <a onClick={handleLogout} className="btn btn-block btn-section btn-default ellipsis">
+        <a onClick={() => dispatch(logout())} className="btn btn-block btn-section btn-default ellipsis">
           Sign out
         </a>
         <Playlists />
@@ -78,7 +67,6 @@ const Sidebar = ({ routes, user, dispatch }) => {
 };
 
 Sidebar.propTypes = {
-  routes: PropTypes.arrayOf(PropTypes.object).isRequired,
   user: PropTypes.object,
   dispatch: PropTypes.func
 };

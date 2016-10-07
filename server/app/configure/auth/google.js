@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { OAuth2Strategy } from 'passport-google-oauth';
+import checkReturnTo from '../../../utils/checkReturnTo';
 
 module.exports = (app, db) => {
   const User = db.model('user');
@@ -37,12 +38,12 @@ module.exports = (app, db) => {
 
   passport.use(new OAuth2Strategy(googleConfig, strategyFn));
 
-  app.get('/auth/google', passport.authenticate('google', {
+  app.get('/auth/google', checkReturnTo, passport.authenticate('google', {
     scope: [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email'
     ]
   }));
 
-  app.get('/auth/google/callback', passport.authenticate('google', { successRedirect: '/', failureRedirect: '/' }));
+  app.get('/auth/google/callback', passport.authenticate('google', { successReturnToOrRedirect: '/', failureRedirect: '/' }));
 };

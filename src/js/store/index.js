@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from '../action-reducers';
-import logger from 'redux-logger';
+import createLogger from 'redux-logger';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import promise from './middleware/promise';
@@ -9,7 +9,7 @@ import promise from './middleware/promise';
 let middleware = [thunk, promise, routerMiddleware(browserHistory)];
 
 if (process.env.NODE_ENV !== 'production') {
-  middleware.push(logger());
+  middleware.push(createLogger());
 }
 
 const enhancers = compose(applyMiddleware(...middleware), window.devToolsExtension ? window.devToolsExtension() : f => f);

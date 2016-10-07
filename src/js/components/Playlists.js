@@ -19,14 +19,15 @@ const Playlists = ({ playlists, playlist, user, dispatch }) => {
       {playlists.map(play =>
         <NavLink key={play.id} to={`/playlists/${play.id}`}>
           <section className="playlist">
-            <span className="menu-item">{play.name}</span>
-            <button className="btn btn-default btn-xs" onClick={ evt => {
-                evt.preventDefault();
-                del(dispatch, user.id, play.id, playlist);
-              }
-            }>
-              <span className="glyphicon glyphicon-remove"></span>
-            </button>
+            <span className="menu-item ellipsis">{play.name}
+              <button className="btn btn-default btn-xs" onClick={ evt => {
+                  evt.preventDefault();
+                  del(dispatch, user.id, play.id, playlist);
+                }
+              }>
+                <span className="glyphicon glyphicon-remove"></span>
+              </button>
+            </span>
           </section>
         </NavLink>
       )}

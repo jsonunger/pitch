@@ -1,5 +1,6 @@
 import passport from 'passport';
 import Strategy from 'passport-facebook';
+import checkReturnTo from '../../../utils/checkReturnTo';
 
 module.exports = (app, db) => {
   const User = db.model('user');
@@ -37,7 +38,7 @@ module.exports = (app, db) => {
 
   passport.use(new Strategy(facebookConfig, strategyFn));
 
-  app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
+  app.get('/auth/facebook', checkReturnTo, passport.authenticate('facebook', { scope: 'email' }));
 
-  app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/' }));
+  app.get('/auth/facebook/callback', passport.authenticate('facebook', { successReturnToOrRedirect: '/', failureRedirect: '/' }));
 };

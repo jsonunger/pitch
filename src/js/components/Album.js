@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import Image from 'react-bootstrap/lib/Image';
 import SongList from '../containers/SongListContainer';
 import '../../scss/album';
 
@@ -35,9 +36,9 @@ class Album extends Component {
       <div className="album">
         <div>
           <h3>{ album.name }</h3>
-          <img src={ album.imageUrl } className="img-thumbnail" />
+          <Image src={ album.imageUrl } thumbnail />
         </div>
-        <SongList songs={album.songs} />
+        <SongList songs={album.songs} listType={'album'} />
       </div>
 
     );

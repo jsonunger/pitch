@@ -1,58 +1,76 @@
 import React, { Component, PropTypes } from 'react';
-import { browserHistory } from 'react-router';
+import { Modal, Button, Glyphicon, Form, FormGroup, FormControl, ControlLabel, Col } from 'react-bootstrap';
+import { createPlaylist } from '../action-reducers/playlists';
 
 function isNameTaken (name, playlists) {
   return playlists.some(play => play.name === name);
 }
 
 class PlaylistForm extends Component {
+  static propTypes = {
+    user: PropTypes.object,
+    playlists: PropTypes.array,
+    dispatch: PropTypes.func
+  }
+
   constructor(props) {
     super(props);
     this.state = {
-      name: ''
+      name: '',
+      modal: false
     };
     this.createPlaylist = this.createPlaylist.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   createPlaylist(e) {
-    const { create, err, user } = this.props;
+    const { dispatch, user } = this.props;
     e.preventDefault();
-    create(this.state.name, user.id)
-      .then(({ playlist }) => {
-        browserHistory.push(`/playlists/${playlist.id}`);
-      })
-      .catch(err);
+    dispatch(createPlaylist(user.id, this.state.name))
+    .then(this.closeModal);
+  }
+
+  openModal() {
+    this.setState({ modal: true });
+  }
+
+  closeModal() {
+    this.setState({ modal: false, name: '' });
   }
 
   render() {
+    const isDisabled = isNameTaken(this.state.name, this.props.playlists) || !this.state.name;
     return (
-      <div className="well">
-        <form className="form-horizontal" name="playlistForm" onSubmit={this.createPlaylist}>
-          <fieldset>
-            <legend>New Playlist</legend>
-            <div className="form-group">
-              <label htmlFor="title" className="col-xs-2 control-label">Title</label>
-              <div className="col-xs-10">
-                <input className="form-control" name="title" type="text" required onChange={ e => this.setState({ name: e.target.value || '' }) } />
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-xs-10 col-xs-offset-2">
-                <button type="submit" className="btn btn-success" disabled={ isNameTaken(this.state.name, this.props.playlists) || !this.state.name }>Create Playlist</button>
-              </div>
-            </div>
-          </fieldset>
-        </form>
+      <div>
+        <Button onClick={this.openModal} bsStyle="primary" block className="btn-section ellipsis">
+          <Glyphicon glyph="plus" /> PLAYLIST
+        </Button>
+        <Modal show={this.state.modal} onHide={this.closeModal} keyboard={false}>
+          <Modal.Header>
+            <Modal.Title>Create New Playlist</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form horizontal name="playlistForm" onSubmit={this.createPlaylist}>
+              <fieldset>
+                <FormGroup controlId="title">
+                  <ControlLabel className="col-xs-2">Title</ControlLabel>
+                  <Col xs={10} sm={9}>
+                    <FormControl name="title" type="text" required onChange={e => this.setState({ name: e.target.value || '' })} />
+                  </Col>
+                  <Button type="submit" style={{ display: 'none' }} disabled={ isDisabled }></Button>
+                </FormGroup>
+              </fieldset>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.closeModal}>Close</Button>
+            <Button type="button" bsStyle="success" disabled={ isDisabled } onClick={this.createPlaylist}>Create Playlist</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }
 }
-
-PlaylistForm.propTypes = {
-  create: PropTypes.func.isRequired,
-  err: PropTypes.func.isRequired,
-  user: PropTypes.object,
-  playlists: PropTypes.array
-};
 
 export default PlaylistForm;

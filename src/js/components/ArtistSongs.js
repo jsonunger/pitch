@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 import SongList from '../containers/SongListContainer';
 
-const ArtistSongs = ({ artist }) => {
+const ArtistSongs = ({ artist: { songs } }) => {
   return (
     <div>
-      <h4>SONGS</h4>
-      <SongList songs={ artist.songs } />
+      <br />
+      <SongList songs={ songs } listType={'artist'} />
     </div>
   );
 };

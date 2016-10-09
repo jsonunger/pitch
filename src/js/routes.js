@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, IndexRedirect, IndexRoute } from 'react-router';
-import { App, Album, Albums, Artist, Artists, Playlist, PlaylistForm, ArtistSongs, ArtistAlbums } from './containers';
+import { App, Album, Albums, Artist, Artists, Playlist, ArtistSongs, ArtistAlbums } from './containers';
 import { NotFound } from './components';
 import { isLoaded as isAuthLoaded, load as loadAuth } from './action-reducers/auth';
 
@@ -38,13 +38,14 @@ export default function buildRoutes (store) {
 
       { /* Authenticated Routes */ }
       <Route onEnter={requireUser} >
-        <Route path="playlists/new" component={PlaylistForm} />
         <Route name="playlist" path="playlists/:playlistId" component={Playlist} />
       </Route>
 
       { /* Routes */ }
-      <Route name="albums" path="albums" component={Albums} />
-      <Route path="/albums/:albumId" component={Album} />
+      <Route name="albums" path="albums">
+        <IndexRoute component={Albums} />
+        <Route path=":albumId" component={Album} />
+      </Route>
       <Route name="artists" path="artists">
         <IndexRoute component={Artists} />
         <Route path=":artistId" component={Artist}>

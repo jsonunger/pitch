@@ -1,6 +1,6 @@
 import { get, post, del } from '../utils/api';
 import { requestFailed } from './error';
-import { convertSong } from '../utils/convert';
+import { convertSong } from '../utils/helpers';
 import { next } from './playerActions';
 import { setCurrentList } from './currentList';
 import { pauseMusic } from './isPlaying';

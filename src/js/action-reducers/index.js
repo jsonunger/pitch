@@ -13,7 +13,6 @@ import isPlaying from './isPlaying';
 import playlist from './playlist';
 import playlists from './playlists';
 import progress from './progress';
-import scrollWidth from './scrollWidth';
 import songs from './songs';
 
 const rootReducer = combineReducers({
@@ -30,7 +29,6 @@ const rootReducer = combineReducers({
   playlists,
   progress,
   routing,
-  scrollWidth,
   songs
 });
 

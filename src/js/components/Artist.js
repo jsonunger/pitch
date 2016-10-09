@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
+import { Nav, NavItem } from 'react-bootstrap';
 
 class Artist extends Component {
   static propTypes = {
@@ -7,11 +7,17 @@ class Artist extends Component {
     children: PropTypes.element.isRequired,
     fetchArtist: PropTypes.func.isRequired,
     unset: PropTypes.func.isRequired,
-    artist: PropTypes.object.isRequired
+    artist: PropTypes.object.isRequired,
+    goTo: PropTypes.func,
+    routes: PropTypes.array
   }
 
   constructor(props) {
     super(props);
+    this.state = {
+      activeKey: props.routes[3].path || 'album'
+    };
+    this.go = this.go.bind(this);
   }
 
   componentDidMount() {
@@ -28,16 +34,23 @@ class Artist extends Component {
     this.props.unset();
   }
 
+  go(evt) {
+    const { artist: { id }, goTo } = this.props;
+    const activeKey = evt.target.title;
+    this.setState({ activeKey });
+    return goTo(id, activeKey);
+  }
+
   render() {
-    const { artist } = this.props;
+    const { artist, children } = this.props;
     return (
       <div>
         <h3>{ artist.name }</h3>
-        <ul className="nav nav-tabs">
-          <li><Link to={`/artists/${ artist.id }/albums`}>ALBUMS</Link></li>
-          <li><Link to={`/artists/${ artist.id }/songs`}>SONGS</Link></li>
-        </ul>
-        { this.props.children }
+        <Nav bsStyle="tabs" activeKey={this.state.activeKey}>
+          <NavItem eventKey={'albums'} title={'albums'} onClick={this.go}>ALBUMS</NavItem>
+          <NavItem eventKey={'songs'} title={'songs'} onClick={this.go}>SONGS</NavItem>
+        </Nav>
+        { children }
       </div>
     );
   }

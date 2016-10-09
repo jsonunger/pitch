@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react';
+import { Button, Glyphicon, ProgressBar } from 'react-bootstrap';
 import { dispatch } from '../store';
 import { next } from '../action-reducers/playerActions';
 import { setProgress } from '../action-reducers/progress';
+import { findProp } from '../utils/helpers';
 
 let audio = document.createElement('audio');
 
@@ -15,12 +17,10 @@ audio.addEventListener('timeupdate', function () {
 
 export default class Player extends Component {
   static propTypes = {
-    scrollWidth: PropTypes.number,
     currentSong: PropTypes.object,
-    setScrollWidth: PropTypes.func.isRequired,
     progress: PropTypes.number,
-    previous: PropTypes.func.isRequired,
-    next: PropTypes.func.isRequired,
+    previousSong: PropTypes.func.isRequired,
+    nextSong: PropTypes.func.isRequired,
     toggle: PropTypes.func.isRequired,
     isPlaying: PropTypes.bool.isRequired,
     currentList: PropTypes.object
@@ -28,19 +28,17 @@ export default class Player extends Component {
 
   constructor(props) {
     super(props);
-    this.handleResize = this.handleResize.bind(this);
     this.seek = this.seek.bind(this);
   }
 
-  seek(e) {
-    const { scrollWidth } = this.props;
-    let decimal = e.nativeEvent.offsetX / scrollWidth;
+  seek({ target, nativeEvent }) {
+    let barWidth = findProp(target, `${target.className === 'progress' ? '' : 'parentNode.'}scrollWidth`);
+    let decimal = nativeEvent.offsetX / barWidth;
     audio.currentTime = audio.duration * decimal;
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentSong } = this.props;
-    if (currentSong.id !== nextProps.currentSong.id) {
+    if (this.props.currentSong.id !== nextProps.currentSong.id) {
       audio.src = nextProps.currentSong.audioUrl;
       audio.load();
     }
@@ -48,48 +46,24 @@ export default class Player extends Component {
     audio[nextProps.isPlaying ? 'play' : 'pause']();
   }
 
-  handleResize() {
-    const { progressBar } = this.refs;
-    const { setScrollWidth } = this.props;
-    if (progressBar) {
-      setScrollWidth(progressBar.scrollWidth);
-    }
-  }
-
-  componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!prevProps.scrollWidth && this.refs.progressBar) {
-      this.handleResize();
-    }
-  }
-
   render() {
-    const { currentSong, progress, previous, toggle, isPlaying, next, currentList } = this.props;
+    const { currentSong, progress, previousSong, toggle, isPlaying, nextSong, currentList } = this.props;
     if (!currentSong.id) return null;
     return (
       <div>
         <div className="pull-left">
-          <button onClick={ previous } className="btn btn-default" disabled={ currentList.songs.length <= 1 }>
-            <span className="glyphicon glyphicon-step-backward"></span>
-          </button>{' '}
-          <button onClick={ toggle } className="btn btn-default">
-            <span className={`glyphicon glyphicon-${ isPlaying ? 'pause' : 'play' }`}></span>
-          </button>{' '}
-          <button onClick={ next } className="btn btn-default" disabled={ currentList.songs.length <= 1 }>
-            <span className="glyphicon glyphicon-step-forward"></span>
-          </button>
+          <Button onClick={previousSong} disabled={currentList.songs.length <= 1}>
+            <Glyphicon glyph={'step-backward'} />
+          </Button>{' '}
+          <Button onClick={ toggle }>
+            <Glyphicon glyph={isPlaying ? 'pause' : 'play'} />
+          </Button>{' '}
+          <Button onClick={ nextSong } disabled={ currentList.songs.length <= 1 }>
+            <Glyphicon glyph={'step-forward'} />
+          </Button>
         </div>
         <div className="bar">
-          <div ref="progressBar" className="progress" onClick={ this.seek }>
-            <div className="progress-bar" style={{ width: `${progress * 100}%` }}></div>
-          </div>
+          <ProgressBar onClick={this.seek} now={progress * 100} label={ `${currentSong.name} - ${currentSong.artists.map(a => a.name).join(', ')}` } />
         </div>
       </div>
     );

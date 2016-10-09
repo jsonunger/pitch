@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Bluebird from 'bluebird';
 import { connect } from 'react-redux';
+import { Col, Grid } from 'react-bootstrap';
 import Sidebar from '../components/Sidebar';
 import Player from '../containers/PlayerContainer';
 import { fetchPlaylists } from '../action-reducers/playlists';
@@ -39,17 +40,17 @@ class App extends Component {
     const { children } = this.props;
     return (
       <div id="app">
-        <div className="container-fluid">
-          <div className="col-xs-2">
+        <Grid fluid={true}>
+          <Col xs={2}>
             <Sidebar {...this.props} />
-          </div>
-          <div className="col-xs-10">
+          </Col>
+          <Col xs={10}>
             { children }
-          </div>
+          </Col>
           <footer>
             <Player />
           </footer>
-        </div>
+        </Grid>
       </div>
     );
   }

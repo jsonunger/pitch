@@ -1,6 +1,6 @@
 import { get } from '../utils/api';
 import { requestFailed } from './error';
-import { convertSong, convertAlbum } from '../utils/convert';
+import { convertSong, convertAlbum } from '../utils/helpers';
 
 /** ACTION TYPES */
 const RECEIVE_ALBUM = 'RECEIVE_ALBUM';

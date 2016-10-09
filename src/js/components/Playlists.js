@@ -1,48 +1,58 @@
-import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+import React, { Component, PropTypes } from 'react';
+// import { Link } from 'react-router';
 import { push } from 'react-router-redux';
+import { Button, Glyphicon } from 'react-bootstrap';
 import { deletePlaylist } from '../action-reducers/playlists';
 import NavLink from './NavLink';
+import PlaylistForm from '../containers/PlaylistFormContainer';
 import '../../scss/playlist';
 
-const del = (dispatch, userId, playlistId, current) => {
-  dispatch(deletePlaylist(userId, playlistId))
-    .then(() => {
-      if (current.id === playlistId) dispatch(push('/albums'));
-    });
-};
+class Playlists extends Component {
+  static propTypes = {
+    playlists: PropTypes.arrayOf(PropTypes.object).isRequired,
+    dispatch: PropTypes.func.isRequired,
+    playlist: PropTypes.object,
+    user: PropTypes.object
+  }
 
-const Playlists = ({ playlists, playlist, user, dispatch }) => {
-  return (
-    <section id="playlist">
-      <h4 className="text-muted">PLAYLISTS</h4>
-      {playlists.map(play =>
-        <NavLink key={play.id} to={`/playlists/${play.id}`}>
-          <section className="playlist">
-            <span className="menu-item ellipsis">{play.name}
-              <button className="btn btn-default btn-xs" onClick={ evt => {
-                  evt.preventDefault();
-                  del(dispatch, user.id, play.id, playlist);
-                }
-              }>
-                <span className="glyphicon glyphicon-remove"></span>
-              </button>
-            </span>
-          </section>
-        </NavLink>
-      )}
-      <p>
-        <Link to="/playlists/new" className="btn btn-primary btn-block ellipsis"><span className="glyphicon glyphicon-plus"></span> PLAYLIST</Link>
-      </p>
-    </section>
-  );
-};
+  constructor(props) {
+    super(props);
+    this.del = this.del.bind(this);
+  }
 
-Playlists.propTypes = {
-  playlists: PropTypes.arrayOf(PropTypes.object).isRequired,
-  dispatch: PropTypes.func.isRequired,
-  playlist: PropTypes.object,
-  user: PropTypes.object
-};
+  del(playlistId) {
+    const { dispatch, user, playlist } = this.props;
+    dispatch(deletePlaylist(user.id, playlistId))
+      .then(() => {
+        if (playlist.id === playlistId) dispatch(push('/albums'));
+      });
+  }
+
+  render() {
+    const { playlists } = this.props;
+    return (
+      <section id="playlist">
+        <h4 className="text-muted">PLAYLISTS</h4>
+        {playlists.map(playlist =>
+          <NavLink key={playlist.id} to={`/playlists/${playlist.id}`}>
+            <section className="playlist">
+              <span className="menu-item ellipsis">{playlist.name}
+                <Button
+                  bsSize="xsmall"
+                  onClick={e => {
+                    e.preventDefault();
+                    this.del(playlist.id);
+                }}>
+                  <Glyphicon glyph="remove" />
+                </Button>
+              </span>
+            </section>
+          </NavLink>
+        )}
+        <PlaylistForm />
+      </section>
+    );
+  }
+}
 
 export default Playlists;

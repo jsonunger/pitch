@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 import AlbumList from './AlbumList';
 
-const ArtistAlbums = ({ artist }) => {
+const ArtistAlbums = ({ artist: { albums } }) => {
   return (
     <div>
-      <h4>ALBUMS</h4>
-      <AlbumList albums={ artist.albums } />
+      <br />
+      <AlbumList albums={ albums } />
     </div>
   );
 };

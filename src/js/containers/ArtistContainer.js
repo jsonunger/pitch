@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import Artist from '../components/Artist';
 import { fetchArtist, unsetArtist } from '../action-reducers/artist';
 
@@ -15,6 +16,9 @@ function mapDispatchToProps (dispatch) {
     },
     unset () {
       return dispatch(unsetArtist());
+    },
+    goTo (artistId, childRoute) {
+      return dispatch(push(`/artists/${artistId}/${childRoute}`));
     }
   };
 }

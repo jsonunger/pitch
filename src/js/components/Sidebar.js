@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { Button } from 'react-bootstrap';
 import NavLink from './NavLink';
 import Playlists from '../containers/PlaylistsContainer';
 import { logout } from '../action-reducers/auth';
@@ -10,9 +11,11 @@ const renderPlaylistsOrLogin = (user, dispatch) => {
   if (user) {
     return (
       <div>
-        <a onClick={() => dispatch(logout())} className="btn btn-block btn-section btn-default ellipsis">
-          Sign out
-        </a>
+        <section>
+          <Button onClick={() => dispatch(logout())} className="btn-section ellipsis" block>
+            Sign out
+          </Button>
+        </section>
         <Playlists />
       </div>
     );
@@ -30,10 +33,10 @@ const AuthButton = ({ provider }) => {
   const lowProvider = provider.toLowerCase();
   return (
     <section className="btn-section">
-      <a href={`/auth/${lowProvider}`} className={`btn btn-social btn-${lowProvider} btn-block btn-oauth`}>
+      <Button href={`/auth/${lowProvider}`} block bsStyle="social" className={`btn-${lowProvider} btn-oauth`}>
         <i className={`fa fa-${lowProvider}`}></i>
         <span>Sign in with {provider}</span>
-      </a>
+      </Button>
     </section>
   );
 };
@@ -42,7 +45,7 @@ AuthButton.propTypes = {
   provider: PropTypes.string
 };
 
-const Sidebar = ({ routes, user, dispatch }) => {
+const Sidebar = ({ user, dispatch }) => {
   return (
     <div id="sidebar">
       <Link to="/"><img src="/pitch.svg" className="logo" /></Link>
@@ -61,7 +64,7 @@ const Sidebar = ({ routes, user, dispatch }) => {
         </section>
       </NavLink>
       <hr />
-      {renderPlaylistsOrLogin(user, dispatch, routes)}
+      {renderPlaylistsOrLogin(user, dispatch)}
     </div>
   );
 };

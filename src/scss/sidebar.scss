@@ -14,7 +14,7 @@
     padding: 15px;
   }
 
-  section > * {
+  section > *:not(.btn) {
     padding: 0 15px;
   }
 
@@ -40,10 +40,6 @@
         text-decoration: underline;
       }
     }
-  }
-
-  .btn-oauth {
-    padding: 8px 12px 8px 44px !important;
   }
 
   .btn-section {

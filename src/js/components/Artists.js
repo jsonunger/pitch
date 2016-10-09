@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { InputGroup, FormControl } from 'react-bootstrap';
 import ArtistList from './ArtistList';
 
 function filteredArtists (artists, filter) {
@@ -26,10 +27,10 @@ class Artists extends Component {
     return (
       <div>
         <h3>Artists</h3>
-        <div className="panel input-group">
-          <span className="input-group-addon">Filter</span>
-          <input type="text" className="form-control" placeholder="by name" onChange={e => this.setState({ filter: e.target.value || '' })} />
-        </div>
+        <InputGroup className="panel">
+          <InputGroup.Addon>Filter</InputGroup.Addon>
+          <FormControl type="text" placeholder="by artist name" onChange={e => this.setState({ filter: e.target.value || '' })} />
+        </InputGroup>
         <ArtistList artists={filteredArtists(artists, this.state.filter)} />
       </div>
     );

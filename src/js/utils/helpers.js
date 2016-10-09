@@ -13,3 +13,13 @@ export const sortByName = array => array.sort((a, b) => {
   else if (a.sortName > b.sortName) return 1;
   else return 0;
 });
+
+export const findProp = (obj, path) => {
+  if (typeof obj !== 'object') return;
+
+  let props = Array.isArray(path) ? path : path.split('.');
+  const propVal = obj[props.shift()];
+  if (typeof propVal === 'undefined') return;
+
+  return props.length ? findProp(propVal, props) : propVal;
+};

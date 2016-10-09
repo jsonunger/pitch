@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import AlbumCard from './AlbumCard';
-import { sortByName } from '../utils/convert';
+import { sortByName } from '../utils/helpers';
 
 const AlbumList = ({ albums }) => {
   sortByName(albums);

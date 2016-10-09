@@ -13,6 +13,5 @@ export Player from './Player';
 export Playlist from './Playlist';
 export PlaylistForm from './PlaylistForm';
 export Playlists from './Playlists';
-export ProgressBar from './ProgressBar';
 export Sidebar from './Sidebar';
 export SongList from './SongList';

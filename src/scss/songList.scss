@@ -1,8 +1,14 @@
-#songList tr {
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: pointer;
-  &:hover {
-    background-color: #444;
+#songList {
+  tr {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    &:hover {
+      background-color: #444;
+    }
+  }
+
+  td {
+    vertical-align: middle;
   }
 }

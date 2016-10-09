@@ -9,7 +9,8 @@ function mapStateToProps (state) {
     currentSong: state.currentSong,
     playlist: state.playlist,
     album: state.album,
-    user: state.auth.user
+    user: state.auth.user,
+    artist: state.artist
   };
 }
 

@@ -3,6 +3,7 @@ import { requestFailed } from './error';
 import { clearCurrentList } from './currentList';
 import { setCurrentSong } from './currentSong';
 import { pauseMusic } from './isPlaying';
+import { push } from 'react-router-redux';
 
 
 /** ACTION TYPES */
@@ -36,9 +37,10 @@ export const fetchPlaylists = userId => dispatch => {
   .catch(err => dispatch(requestFailed(err)));
 };
 
-export const createPlaylist = (userId, playlist) => dispatch => {
-  return post(`/api/users/${userId}/playlists`, playlist)
+export const createPlaylist = (userId, name) => dispatch => {
+  return post(`/api/users/${userId}/playlists`, { name })
     .then(returnedPlaylist => dispatch(addPlaylist(returnedPlaylist)))
+    .then(({ playlist }) => dispatch(push(`/playlists/${playlist.id}`)))
     .catch(err => dispatch(requestFailed(err)));
 };
 

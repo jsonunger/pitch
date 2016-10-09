@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { sortByName } from '../utils/convert';
+import { Well, Form, FormGroup, FormControl, ControlLabel, Col, Button } from 'react-bootstrap';
+import { sortByName } from '../utils/helpers';
 
 function songExists (songList, songId) {
   return songList.some(song => song.id === songId);
@@ -36,27 +37,29 @@ class ChooseSong extends Component {
     const { song } = this.state;
     sortByName(songs);
     return (
-      <div className="well">
-        <form className="form-horizontal" name="songSelect" onSubmit={ this.submit }>
+      <Well>
+        <Form horizontal name="songSelect" onSubmit={this.submit}>
           <fieldset>
             <legend>Add to Playlist</legend>
-            <div className="form-group">
-              <label htmlFor="song" className="col-xs-2 control-label">Song</label>
-              <div className="col-xs-10">
-                <select className="form-control" name="song" required value={ song } onChange={ e => this.setState({ song: e.target.value }) }>
+            <FormGroup controlId={'song'}>
+              <ControlLabel className="col-xs-2">Song</ControlLabel>
+              <Col xs={10}>
+                <FormControl componentClass={'select'} required value={ song } onChange={ e => this.setState({ song: e.target.value }) }>
                   <option></option>
                   { songs.map(s => <option value={s.id} key={s.id}>{s.name} - {s.artists.map(a => a.name).join(', ')}</option>) }
-                </select>
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-xs-10 col-xs-offset-2">
-                <button type="submit" className="btn btn-success" disabled={ songExists(playlist.songs, song) || !song }>Add Song</button>
-              </div>
-            </div>
+                </FormControl>
+              </Col>
+            </FormGroup>
+            <FormGroup>
+              <Col xs={10} xsOffset={2}>
+                <Button type={'submit'} bsStyle={'success'} disabled={ songExists(playlist.songs, song) || !song }>
+                  Add Song
+                </Button>
+              </Col>
+            </FormGroup>
           </fieldset>
-        </form>
-      </div>
+        </Form>
+      </Well>
     );
   }
 }

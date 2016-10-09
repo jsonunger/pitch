@@ -1,17 +1,18 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { sortByName } from '../utils/convert';
+import { ListGroup, ListGroupItem } from 'react-bootstrap';
+import { sortByName } from '../utils/helpers';
 
 const ArtistList = ({ artists }) => {
   sortByName(artists);
   return (
-    <div className="list-group">
+    <ListGroup>
       {artists.map(artist => (
-        <div key={artist.id} className="list-group-item">
+        <ListGroupItem key={artist.id}>
           <Link to={`/artists/${artist.id}`}>{ artist.name }</Link>
-        </div>
+        </ListGroupItem>
       ))}
-    </div>
+    </ListGroup>
   );
 };
 

@@ -26,8 +26,7 @@ class Playlist extends Component {
   }
 
   componentWillUnmount() {
-    const { unset } = this.props;
-    unset();
+    this.props.unset();
   }
 
   render() {
@@ -38,7 +37,7 @@ class Playlist extends Component {
     return (
       <div>
         <h3>{ playlist.name }</h3>
-        <SongList songs={ songs } inPlaylist={ true } />
+        <SongList songs={ songs } listType={'playlist'} />
         {!playlist.songs.length && <small>No songs.</small>}
         <hr />
         <ChooseSong />

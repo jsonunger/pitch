@@ -2,6 +2,8 @@ import { connect } from 'react-redux';
 import SongList from '../components/SongList';
 import { start } from '../action-reducers/playerActions';
 import { removeSong } from '../action-reducers/playlist';
+import { togglePlaying } from '../action-reducers/isPlaying';
+import { push } from 'react-router-redux';
 
 function mapStateToProps (state) {
   return {
@@ -10,17 +12,24 @@ function mapStateToProps (state) {
     playlist: state.playlist,
     album: state.album,
     user: state.auth.user,
-    artist: state.artist
+    artist: state.artist,
+    isPlaying: state.isPlaying
   };
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    playSong(song, list, listType) {
+    playSong (song, list, listType) {
       return dispatch(start(song, list, listType));
     },
     removeSong (playlistId, songId, userId) {
       return dispatch(removeSong(userId, playlistId, songId));
+    },
+    toggleSong () {
+      return dispatch(togglePlaying());
+    },
+    goTo (path) {
+      return dispatch(push(path));
     }
   };
 }

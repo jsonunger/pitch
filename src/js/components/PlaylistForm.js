@@ -1,6 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import { Modal, Button, Glyphicon, Form, FormGroup, FormControl, ControlLabel, Col } from 'react-bootstrap';
+import Modal from 'react-bootstrap/lib/Modal';
+import Button from 'react-bootstrap/lib/Button';
+import Form from 'react-bootstrap/lib/Form';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Col from 'react-bootstrap/lib/Col';
 import { createPlaylist } from '../action-reducers/playlists';
+import Glyphicon from './Glyphicon';
 
 function isNameTaken (name, playlists) {
   return playlists.some(play => play.name === name);

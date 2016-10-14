@@ -3,12 +3,27 @@
     -webkit-user-select: none;
     user-select: none;
     cursor: pointer;
-    &:hover {
-      background-color: #444;
-    }
   }
 
   td {
     vertical-align: middle;
+  }
+
+  tr {
+    .audio {
+      button {
+        opacity: 0;
+      }
+    }
+
+    &:hover .audio {
+      button {
+        opacity: 1;
+      }
+    }
+  }
+
+  .btn-td {
+    text-align: center;
   }
 }

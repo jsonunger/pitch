@@ -1,5 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { Well, Form, FormGroup, FormControl, ControlLabel, Col, Button } from 'react-bootstrap';
+import Well from 'react-bootstrap/lib/Well';
+import Form from 'react-bootstrap/lib/Form';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Col from 'react-bootstrap/lib/Col';
+import Button from 'react-bootstrap/lib/Button';
 import { sortByName } from '../utils/helpers';
 
 function songExists (songList, songId) {

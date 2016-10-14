@@ -31,9 +31,11 @@ class Playlist extends Component {
 
   render() {
     const { playlist } = this.props;
+    console.log(playlist.songs.map(s => ({name: s.name, ...s.playlistSong})));
     const songs = playlist.songs.filter(s => s.playlistSong);
     songs.sort((a, b) => new Date(a.playlistSong.createdAt) - new Date(b.playlistSong.createdAt));
     songs.push(...playlist.songs.filter(s => !s.playlistSong));
+    console.log(songs.map(s => s.name));
     return (
       <div>
         <h3>{ playlist.name }</h3>

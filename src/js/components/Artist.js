@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { Nav, NavItem } from 'react-bootstrap';
+import Nav from 'react-bootstrap/lib/Nav';
+import NavItem from 'react-bootstrap/lib/NavItem';
 
 class Artist extends Component {
   static propTypes = {

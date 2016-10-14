@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { InputGroup, FormControl } from 'react-bootstrap';
+import InputGroup from 'react-bootstrap/lib/InputGroup';
+import FormControl from 'react-bootstrap/lib/FormControl';
 import ArtistList from './ArtistList';
 
 function filteredArtists (artists, filter) {

@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import Bluebird from 'bluebird';
 import { connect } from 'react-redux';
-import { Col, Grid } from 'react-bootstrap';
+import Col from 'react-bootstrap/lib/Col';
+import Grid from 'react-bootstrap/lib/Grid';
 import Sidebar from '../components/Sidebar';
 import Player from '../containers/PlayerContainer';
 import { fetchPlaylists } from '../action-reducers/playlists';

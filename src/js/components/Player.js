@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { Button, Glyphicon, ProgressBar } from 'react-bootstrap';
+import Button from 'react-bootstrap/lib/Button';
+import ProgressBar from 'react-bootstrap/lib/ProgressBar';
 import { dispatch } from '../store';
 import { next } from '../action-reducers/playerActions';
 import { setProgress } from '../action-reducers/progress';
 import { findProp } from '../utils/helpers';
+import Glyphicon from './Glyphicon';
 
 let audio = document.createElement('audio');
 
@@ -53,13 +55,13 @@ export default class Player extends Component {
       <div>
         <div className="pull-left">
           <Button onClick={previousSong} disabled={currentList.songs.length <= 1}>
-            <Glyphicon glyph={'step-backward'} />
+            <Glyphicon glyph="step-backward" />
           </Button>{' '}
           <Button onClick={ toggle }>
             <Glyphicon glyph={isPlaying ? 'pause' : 'play'} />
           </Button>{' '}
           <Button onClick={ nextSong } disabled={ currentList.songs.length <= 1 }>
-            <Glyphicon glyph={'step-forward'} />
+            <Glyphicon glyph="step-forward" />
           </Button>
         </div>
         <div className="bar">

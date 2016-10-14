@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/lib/Button';
 import NavLink from './NavLink';
 import Playlists from '../containers/PlaylistsContainer';
 import { logout } from '../action-reducers/auth';
+import Glyphicon from './Glyphicon';
 
 import '../../scss/sidebar';
 
@@ -34,7 +35,7 @@ const AuthButton = ({ provider }) => {
   return (
     <section className="btn-section">
       <Button href={`/auth/${lowProvider}`} block bsStyle="social" className={`btn-${lowProvider} btn-oauth`}>
-        <i className={`fa fa-${lowProvider}`}></i>
+        <Glyphicon glyph={lowProvider} />
         <span>Sign in with {provider}</span>
       </Button>
     </section>

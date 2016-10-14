@@ -37,11 +37,9 @@ const config = {
     populated: () => ({
       include: [{
         model: db.model('artist')
-      }]
-    }),
-    album: () => ({
-      include: [{
-        model: db.model('album')
+      }, {
+        model: db.model('album'),
+        attributes: ['name']
       }]
     })
   },
@@ -57,4 +55,3 @@ const config = {
 const Song = db.define('song', definitions, config);
 
 export default Song;
-

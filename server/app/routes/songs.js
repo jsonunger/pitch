@@ -10,7 +10,7 @@ import { Song } from '../../db/models';
 const router = Router();
 
 router.get('/', (req, res, next) => {
-  Song.scope('defaultScope', 'populated', 'album').findAll({ where: req.query })
+  Song.scope('defaultScope', 'populated').findAll({ where: req.query })
     .then(songs => res.json(songs))
     .catch(next);
 });

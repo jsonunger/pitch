@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-// import { Link } from 'react-router';
 import { push } from 'react-router-redux';
-import { Button, Glyphicon } from 'react-bootstrap';
+import Button from 'react-bootstrap/lib/Button';
 import { deletePlaylist } from '../action-reducers/playlists';
 import NavLink from './NavLink';
 import PlaylistForm from '../containers/PlaylistFormContainer';
+import Glyphicon from './Glyphicon';
 import '../../scss/playlist';
 
 class Playlists extends Component {

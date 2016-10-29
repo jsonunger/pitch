@@ -14,13 +14,6 @@ const definitions = {
 };
 
 const config = {
-  scopes: {
-    populated: () => ({
-      include: [{
-        model: db.model('song').scope('defaultScope', 'populated')
-      }]
-    })
-  },
   instanceMethods: {
     addAndReturnSong(songId) {
       songId = String(songId);
@@ -33,6 +26,13 @@ const config = {
       songId = String(songId);
       return this.removeSong(songId);
     }
+  },
+  scopes: {
+    populated: () => ({
+      include: [{
+        model: db.model('song').scope('defaultScope', 'populated')
+      }]
+    })
   }
 };
 

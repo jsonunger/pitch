@@ -59,7 +59,7 @@
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
     "request": "^2.75.0",
-    "sequelize": "3.23.0",
+    "sequelize": "6.3.5",
     "serve-favicon": "^2.2.0",
     "simple-bufferstream": "1.0.0",
     "userhome": "^1.0.0"
